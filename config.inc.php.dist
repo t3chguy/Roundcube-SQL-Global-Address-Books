@@ -4,7 +4,8 @@
 $config['wdg_sql_name'] = 'Meow Address Book';
 
 //Plugin Mode: (* is default).
-// 0: Show Users from the same Domain, but also any in the Whitelist, Seperate Address Books. Does not respect Blacklist. If Whitelisted == Current then Ignore.
+// 0: Show Users from the same Domain, but also any in the Whitelist, Seperate Address Books. Does not respect Blacklist.
+//    If Whitelisted == Current then Ignore. If you set the Whitelist to array('*') with this mode then it'll show all Domains.
 // 1: Show Users from the same Domain, but also any in the Whitelist, no grouping. Does not respect Blacklist.
 // 2: Show Users from the same Domain, but also any in the Whitelist, group by domain. Does not respect Blacklist.
 // 3: Show All Users inside the Address Book with no Groups. Does not respect Whitelist. Respects Blacklist.

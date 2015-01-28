@@ -32,7 +32,13 @@ class webdevguru_sql_contacts extends rcube_plugin {
 		);
 
 		if (rcube::get_instance()->config->get('wdg_sql_mode', 4) === 0) {
-			foreach (rcube::get_instance()->config->get('wdg_sql_whitelist', array()) as $k => $wl) {
+			$doms = rcube::get_instance()->config->get('wdg_sql_whitelist', array());
+			if ($doms === array('*')) {
+				$db = rcube::get_instance()->db;
+				$db->query('SELECT domain FROM global_addressbook WHERE domain<>? GROUP BY domain', rcmail::get_instance()->user->get_username('domain'));
+				while ($ret = $db->fetch_assoc()) { $doms[] = $ret['domain']; }
+			}
+			foreach ($doms as $k => $wl) {
 				if ($wl != rcmail::get_instance()->user->get_username('domain')) {
 					$p['sources'][$wl] = array(
 						'id' => $wl,
