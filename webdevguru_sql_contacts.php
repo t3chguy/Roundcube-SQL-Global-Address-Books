@@ -1,15 +1,13 @@
 <?php
 
-require_once(__DIR__ . '/webdevguru_contacts_backend.php');
+require_once(__DIR__ . '/webdevguru_sql_contacts_backend.php');
 
 /**
  * Web Development Guru Specialised Global Addressbook Contacts Class!
  *
  * @author Michael Daniel Telatynski
  */
-class webdevguru_contacts extends rcube_plugin {
-	private $abook_id = 'webdevguru';
-	private $abook_name = 'Global Address Book';
+class webdevguru_sql_contacts extends rcube_plugin {
 
 	public function init() {
 		$this->add_hook('addressbooks_list', array($this, 'address_sources'));
@@ -36,7 +34,7 @@ class webdevguru_contacts extends rcube_plugin {
 
 	public function get_address_book($p) {
 		if ($p['id'] === 'company') {
-			$p['instance'] = new wdg_contacts_backend();
+			$p['instance'] = new wdg_sql_contacts_backend();
 		}
 
 		return $p;

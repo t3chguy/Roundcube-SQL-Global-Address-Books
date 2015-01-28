@@ -5,14 +5,14 @@
  *
  * @author Michael Daniel Telatynski
  */
-class wdg_contacts_backend extends rcube_addressbook {
+class wdg_sql_contacts_backend extends rcube_addressbook {
 
 	public $primary_key = 'ID';
 	public $readonly = true;
 	public $groups = true;
 	public $group_id;
 
-	private $filter, $result, $name, $domain;
+	private $filter, $result, $name;
 
 	public function __construct($name='company') {
 		$this->ready = true;
