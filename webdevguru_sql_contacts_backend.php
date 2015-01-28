@@ -53,7 +53,7 @@ class wdg_sql_contacts_backend extends rcube_addressbook {
 	}
 
 	function list_groups($search = null, $mode=0) {
-		if (rcube::get_instance()->config->get('wdg_sql_mode', 1) === 1) { return array(); }
+		if (in_array(rcube::get_instance()->config->get('wdg_sql_mode', 4), array(0, 1, 3), true)) { return array(); }
 		$db = rcube::get_instance()->db;
 		$db->query('SELECT domain FROM global_addressbook GROUP BY domain');
 		while ($ret = $db->fetch_assoc()) { $grps[] = array('ID' => $ret['domain'], 'name' => $ret['domain']); }

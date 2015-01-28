@@ -28,11 +28,11 @@ class webdevguru_sql_contacts extends rcube_plugin {
 			'name' => rcube::get_instance()->config->get('wdg_sql_name', 'Global Address Book'),
 			'readonly' => true,
 			'autocomplete' => true,
-			'groups' => true,
+			'groups' => in_array(rcube::get_instance()->config->get('wdg_sql_mode', 4), array(2, 4), true),
 		);
 		return $p;
 
-		if (rcube::get_instance()->config->get('wdg_sql_mode', 1) === 4) {
+		if (rcube::get_instance()->config->get('wdg_sql_mode', 4) === 0) {
 			foreach (rcube::get_instance()->config->get('wdg_sql_whitelist', array()) as $wl) {
 
 			}

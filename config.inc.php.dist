@@ -3,15 +3,16 @@
 //Set the name of the Global Address Book
 $config['wdg_sql_name'] = 'Global Address Book';
 
-//Plugin Mode: (* is default)
-// 0: Show All Users inside the Address Book with no Domains as Groups.
-//*1: Show All Users inside the Address Book but group by domain.
-// 2: Show All Users from the same Domain, but also any in the Whitelist, no grouping.
-// 3: Show All Users from the same Domain, but also any in the Whitelist, group by domain.
-// 4: Show All Users from the same Domain, but also any in the Whitelist, Seperate Address Books.
-$config['wdg_sql_mode'] = 1;
+//Plugin Mode: (* is default) All respect the Blacklist.
+// 0: Show All Users from the same Domain, but also any in the Whitelist, Seperate Address Books.
+// 1: Show All Users from the same Domain, but also any in the Whitelist, no grouping.
+// 2: Show All Users from the same Domain, but also any in the Whitelist, group by domain.
+// 3: Show All Users inside the Address Book with no Groups. Does not respect Whitelist.
+//*4: Show All Users inside the Address Book but group by domain. Does not respect Whitelist.
+$config['wdg_sql_mode'] = 4;
 
 //Whitelist, If NULL then Whitelist is disabled, if Array containing strings then only the domains contained will get displayed. Not Implemented Yet.
+//If using Mode:4 then the KEY of each Entry will be the Individual Name of each Address Book. E.g. array('name' => 'domain.com');
 $config['wdg_sql_whitelist'] = NULL;
 
 //Blacklist, if NULL then Blacklist is disabled, if Array containing strings then domains contained will not be displayed. Whitelist > Blacklist. Not Implemented Yet.
