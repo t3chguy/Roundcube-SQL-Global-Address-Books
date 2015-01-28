@@ -31,11 +31,22 @@ class webdevguru_sql_contacts extends rcube_plugin {
 			'groups' => true,
 		);
 		return $p;
+
+		if (rcube::get_instance()->config->get('wdg_sql_mode', 1) === 4) {
+			foreach (rcube::get_instance()->config->get('wdg_sql_whitelist', array()) as $wl) {
+
+			}
+		}
 	}
 
 	public function get_address_book($p) {
 		if ($p['id'] === 'company') {
 			$p['instance'] = new wdg_sql_contacts_backend();
+			return $p;
+		}
+		$rconfig = rcube::get_instance()->config;
+		if ($rconfig->get('wdg_sql_mode', 1) === 4 && in_array($p['id'], $rconfig->get('wdg_sql_whitelist', array()), true) {
+			$p['instance'] = new wdg_sql_contacts_backend($p['id']);
 		}
 
 		return $p;

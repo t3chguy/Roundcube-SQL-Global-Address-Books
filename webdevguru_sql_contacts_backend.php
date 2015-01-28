@@ -53,13 +53,14 @@ class wdg_sql_contacts_backend extends rcube_addressbook {
 	}
 
 	function list_groups($search = null, $mode=0) {
+		if (rcube::get_instance()->config->get('wdg_sql_mode', 1) === 1) { return array(); }
 		$db = rcube::get_instance()->db;
 		$db->query('SELECT domain FROM global_addressbook GROUP BY domain');
-		while ($ret = $db->fetch_assoc()) { $grps[] = ['ID' => $ret['domain'], 'name' => $ret['domain']]; }
+		while ($ret = $db->fetch_assoc()) { $grps[] = array('ID' => $ret['domain'], 'name' => $ret['domain']); }
 		return $grps;
 
 	}
-	function get_group($group_id) { return $this->groups ? ['ID' => $group_id, 'name' => $group_id] : null; }
+	function get_group($group_id) { return $this->groups ? array('ID' => $group_id, 'name' => $group_id) : null; }
 	public function search($fields, $value, $strict=false, $select=true, $nocount=false, $required=array()) { return $this->list_records(); }
 	public function count() { return new rcube_result_set(1, ($this->list_page-1) * $this->page_size); }
 	public function get_result() { return $this->result; }
