@@ -44,7 +44,6 @@ class wdg_sql_contacts_backend extends rcube_addressbook {
 	public function list_records($cols=null, $subset=0) {
 		$this->result = $this->count();
 		$db = rcube::get_instance()->db;
-		file_put_contents('/var/www/test.log', print_r([$this], true));
 
 		if (empty($this->group_id)) {
 			if ($this->mode === 0) {
@@ -52,7 +51,7 @@ class wdg_sql_contacts_backend extends rcube_addressbook {
 			} elseif ($this->mode > 2) {
 				$bl = implode('" , "', rcube::get_instance()->config->get('wdg_sql_blacklist', array()));
 				$db->query('SELECT ID, name, firstname, surname, email FROM global_addressbook WHERE domain NOT IN ("' . $bl . '")');
-			} elseif ($this->mode === 1) {
+			} elseif ($this->mode > 0) {
 				$wl = implode('" , "', rcube::get_instance()->config->get('wdg_sql_whitelist', array()));
 				$db->query('SELECT ID, name, firstname, surname, email FROM global_addressbook WHERE domain=? OR domain IN ("' . $wl . '")', $this->name);
 			}
@@ -76,7 +75,8 @@ class wdg_sql_contacts_backend extends rcube_addressbook {
 			return $grps;
 		}
 		$db = rcube::get_instance()->db;
-		$db->query('SELECT domain FROM global_addressbook GROUP BY domain');
+		$bl = implode('" , "', rcube::get_instance()->config->get('wdg_sql_blacklist', array()));
+		$db->query('SELECT domain FROM global_addressbook WHERE domain NOT IN ("' . $bl . '") GROUP BY domain');
 		while ($ret = $db->fetch_assoc()) { $grps[] = array('ID' => $ret['domain'], 'name' => $ret['domain']); }
 		return $grps;
 

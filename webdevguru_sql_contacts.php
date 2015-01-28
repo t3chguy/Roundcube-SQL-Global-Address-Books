@@ -44,7 +44,6 @@ class webdevguru_sql_contacts extends rcube_plugin {
 				}
 			}
 		}
-		file_put_contents('/var/www/test.log', print_r([$p], true));
 		return $p;
 	}
 
@@ -53,12 +52,8 @@ class webdevguru_sql_contacts extends rcube_plugin {
 			$p['instance'] = new wdg_sql_contacts_backend(rcmail::get_instance()->user->get_username('domain'), rcube::get_instance()->config->get('wdg_sql_mode', 4));
 			return $p;
 		}
-		file_put_contents('/var/www/test.log', print_r([$p], true));
 		$rconfig = rcube::get_instance()->config;
-		if ($rconfig->get('wdg_sql_mode', 4) === 0 && in_array($p['id'], $rconfig->get('wdg_sql_whitelist', array()), true)) {
-			$p['instance'] = new wdg_sql_contacts_backend($p['id'], 0);
-		}
-
+		if ($rconfig->get('wdg_sql_mode', 4) === 0 && in_array($p['id'], $rconfig->get('wdg_sql_whitelist', array()), true)) { $p['instance'] = new wdg_sql_contacts_backend($p['id'], 0); }
 		return $p;
 	}
 
