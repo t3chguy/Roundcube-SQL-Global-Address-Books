@@ -1,14 +1,14 @@
 <?php
 
 //Set the name of the Global Address Book
-$config['wdg_sql_name'] = 'Global Address Book';
+$config['wdg_sql_name'] = 'Meow Address Book';
 
-//Plugin Mode: (* is default) All respect the Blacklist.
-// 0: Show All Users from the same Domain, but also any in the Whitelist, Seperate Address Books.
-// 1: Show All Users from the same Domain, but also any in the Whitelist, no grouping.
-// 2: Show All Users from the same Domain, but also any in the Whitelist, group by domain.
-// 3: Show All Users inside the Address Book with no Groups. Does not respect Whitelist.
-//*4: Show All Users inside the Address Book but group by domain. Does not respect Whitelist.
+//Plugin Mode: (* is default).
+// 0: Show Users from the same Domain, but also any in the Whitelist, Seperate Address Books. Does not respect Blacklist. If Whitelisted == Current then Ignore.
+// 1: Show Users from the same Domain, but also any in the Whitelist, no grouping. Does not respect Blacklist.
+// 2: Show Users from the same Domain, but also any in the Whitelist, group by domain. Does not respect Blacklist.
+// 3: Show All Users inside the Address Book with no Groups. Does not respect Whitelist. Respects Blacklist.
+//*4: Show All Users inside the Address Book but group by domain. Does not respect Whitelist. Respects Blacklist.
 $config['wdg_sql_mode'] = 4;
 
 //Whitelist, If NULL then Whitelist is disabled, if Array containing strings then only the domains contained will get displayed. Not Implemented Yet.

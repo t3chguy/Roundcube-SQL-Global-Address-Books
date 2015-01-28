@@ -13,7 +13,7 @@ class wdg_sql_contacts_backend extends rcube_addressbook {
 
 	private $filter, $result, $name;
 
-	public function __construct($name='company', $mode) {
+	public function __construct($name, $mode) {
 		$this->groups= in_array($mode, array(2, 4), true);
 		$this->ready = true;
 		$this->mode  = $mode;
@@ -44,27 +44,30 @@ class wdg_sql_contacts_backend extends rcube_addressbook {
 	public function list_records($cols=null, $subset=0) {
 		$this->result = $this->count();
 		$db = rcube::get_instance()->db;
-		if (empty($this->group_id) && $this->mode > 2) {
-			$db->query('SELECT ID, name, firstname, surname, email FROM global_addressbook');
-		} elseif ($this->mode === 1) {
-			$xtra = array_reduce(rcube::get_instance()->config->get('wdg_sql_whitelist', array()), function ($carry, $item) {
-				return $carry . ' OR domain=?'
-			});
-			$xtrb = array(array('SELECT ID, name, firstname, surname, email FROM global_addressbook WHERE domain=?' . $xtra, $this->group_id));
-			call_user_func_array(array($db, 'query'), array_merge($xtrb, array_values(rcube::get_instance()->config->get('wdg_sql_whitelist', array()))));
-			//$db->query('SELECT ID, name, firstname, surname, email FROM global_addressbook WHERE domain=?', $this->group_id);
-		} else {
-			$db->query('SELECT ID, name, firstname, surname, email FROM global_addressbook WHERE domain=?', $this->group_id);
-		}
+		file_put_contents('/var/www/test.log', print_r([$this], true));
+
+		if (empty($this->group_id)) {
+			if ($this->mode === 0) {
+				$db->query('SELECT ID, name, firstname, surname, email FROM global_addressbook WHERE domain=?', $this->name);
+			} elseif ($this->mode > 2) {
+				$bl = implode('" , "', rcube::get_instance()->config->get('wdg_sql_blacklist', array()));
+				$db->query('SELECT ID, name, firstname, surname, email FROM global_addressbook WHERE domain NOT IN ("' . $bl . '")');
+			} elseif ($this->mode === 1) {
+				$wl = implode('" , "', rcube::get_instance()->config->get('wdg_sql_whitelist', array()));
+				$db->query('SELECT ID, name, firstname, surname, email FROM global_addressbook WHERE domain=? OR domain IN ("' . $wl . '")', $this->name);
+			}
+		} else {$db->query('SELECT ID, name, firstname, surname, email FROM global_addressbook WHERE domain=?', $this->group_id); }
+
 		while ($ret = $db->fetch_assoc()) { $this->result->add($ret); }
 		return $this->result;
+
 	}
 
 	function list_groups($search = null, $mode=0) {
 		if (!$this->groups) { return array(); }
 		if ($this->mode === 2) {
 			$arr = array_merge(array(
-				rcube::get_instance()->config->get('wdg_sql_name', 'Global Address Book') => rcmail::get_instance()->user->get_username('domain')
+				'This Domain' => rcmail::get_instance()->user->get_username('domain')
 			),  rcube::get_instance()->config->get('wdg_sql_whitelist', array()));
 			foreach ($arr as $key => $val) {
 				if (is_int($key)) { $key = $val; }
