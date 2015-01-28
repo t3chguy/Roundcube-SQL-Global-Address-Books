@@ -1,5 +1,5 @@
 <?php
-
+ini_set('display_errors', 1);
 /**
  * Web Development Guru Specialised Global Addressbook Contacts Class!
  *
@@ -9,13 +9,14 @@ class wdg_sql_contacts_backend extends rcube_addressbook {
 
 	public $primary_key = 'ID';
 	public $readonly = true;
-	public $groups = true;
-	public $group_id;
+	public $groups, $group_id, $mode;
 
 	private $filter, $result, $name;
 
-	public function __construct($name='company') {
+	public function __construct($name='company', $mode) {
+		$this->groups= in_array($mode, array(2, 4), true);
 		$this->ready = true;
+		$this->mode  = $mode;
 		$this->name  = $name;
 	}
 
@@ -43,8 +44,15 @@ class wdg_sql_contacts_backend extends rcube_addressbook {
 	public function list_records($cols=null, $subset=0) {
 		$this->result = $this->count();
 		$db = rcube::get_instance()->db;
-		if (empty($this->group_id)) {
+		if (empty($this->group_id) && $this->mode > 2) {
 			$db->query('SELECT ID, name, firstname, surname, email FROM global_addressbook');
+		} elseif ($this->mode === 1) {
+			$xtra = array_reduce(rcube::get_instance()->config->get('wdg_sql_whitelist', array()), function ($carry, $item) {
+				return $carry . ' OR domain=?'
+			});
+			$xtrb = array(array('SELECT ID, name, firstname, surname, email FROM global_addressbook WHERE domain=?' . $xtra, $this->group_id));
+			call_user_func_array(array($db, 'query'), array_merge($xtrb, array_values(rcube::get_instance()->config->get('wdg_sql_whitelist', array()))));
+			//$db->query('SELECT ID, name, firstname, surname, email FROM global_addressbook WHERE domain=?', $this->group_id);
 		} else {
 			$db->query('SELECT ID, name, firstname, surname, email FROM global_addressbook WHERE domain=?', $this->group_id);
 		}
@@ -53,7 +61,17 @@ class wdg_sql_contacts_backend extends rcube_addressbook {
 	}
 
 	function list_groups($search = null, $mode=0) {
-		if (in_array(rcube::get_instance()->config->get('wdg_sql_mode', 4), array(0, 1, 3), true)) { return array(); }
+		if (!$this->groups) { return array(); }
+		if ($this->mode === 2) {
+			$arr = array_merge(array(
+				rcube::get_instance()->config->get('wdg_sql_name', 'Global Address Book') => rcmail::get_instance()->user->get_username('domain')
+			),  rcube::get_instance()->config->get('wdg_sql_whitelist', array()));
+			foreach ($arr as $key => $val) {
+				if (is_int($key)) { $key = $val; }
+				$grps[] = array('ID' => $val, 'name' => $key);
+			}
+			return $grps;
+		}
 		$db = rcube::get_instance()->db;
 		$db->query('SELECT domain FROM global_addressbook GROUP BY domain');
 		while ($ret = $db->fetch_assoc()) { $grps[] = array('ID' => $ret['domain'], 'name' => $ret['domain']); }
