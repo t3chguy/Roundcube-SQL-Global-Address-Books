@@ -12,7 +12,7 @@ $config['wdg_sql_name'] = 'Global Address Book';
 $config['wdg_sql_mode'] = 4;
 
 //Whitelist, If NULL then Whitelist is disabled, if Array containing strings then only the domains contained will get displayed. Not Implemented Yet.
-//If using Mode:4 then the KEY of each Entry will be the Individual Name of each Address Book. E.g. array('name' => 'domain.com');
+//If using Mode:0 then the KEY of each Entry will be the Individual Name of each Address Book. E.g. array('name' => 'domain.com');
 $config['wdg_sql_whitelist'] = NULL;
 
 //Blacklist, if NULL then Blacklist is disabled, if Array containing strings then domains contained will not be displayed. Whitelist > Blacklist. Not Implemented Yet.

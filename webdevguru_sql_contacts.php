@@ -12,6 +12,7 @@ class webdevguru_sql_contacts extends rcube_plugin {
 	public function init() {
 		$this->add_hook('addressbooks_list', array($this, 'address_sources'));
 		$this->add_hook('addressbook_get', array($this, 'get_address_book'));
+		$this->load_config();
 
 		//$config = rcmail::get_instance()->config;
 		//$sources = (array) $config->get('autocomplete_addressbooks', array('sql'));
@@ -22,21 +23,26 @@ class webdevguru_sql_contacts extends rcube_plugin {
 	}
 
 	public function address_sources($p) {
-		$this->load_config();
 		$p['sources']['company'] = array(
 			'id' => 'company',
 			'name' => rcube::get_instance()->config->get('wdg_sql_name', 'Global Address Book'),
 			'readonly' => true,
 			'autocomplete' => true,
-			'groups' => in_array(rcube::get_instance()->config->get('wdg_sql_mode', 4), array(2, 4), true),
+			'groups' => in_array(rcube::get_instance()->config->get('wdg_sql_mode', 4), array(2, 4), true)
 		);
-		return $p;
 
 		if (rcube::get_instance()->config->get('wdg_sql_mode', 4) === 0) {
-			foreach (rcube::get_instance()->config->get('wdg_sql_whitelist', array()) as $wl) {
-
+			foreach (rcube::get_instance()->config->get('wdg_sql_whitelist', array()) as $k => $wl) {
+				$p['sources'][$wl] = array(
+					'id' => $wl,
+					'name' => $k,
+					'readonly' => true,
+					'autocomplete' => true,
+					'groups' => false
+				);
 			}
 		}
+		return $p;
 	}
 
 	public function get_address_book($p) {
