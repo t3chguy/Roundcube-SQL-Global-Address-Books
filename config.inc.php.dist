@@ -16,9 +16,7 @@ $config['_sql_supportbook']     = array();
 //e-mail domain as the logged in user themself, the only values for configuration are:
 //NULL for disable, a string in an array as the name of the `Domain Book`.
 //READ Allowed is the list of domains (or *) which can see this Address Book.
-//DATA Allowed is the list of domains (or *) which can be listed in this Address Book.
 //READ Hidden is the list of domains (or *) which cannot see this Address Book.
-//DATA Hidden is the list of domains (or *) which cannot be listed in this Address Book.
 //Default for both rules is Everything/Everyone is whitelisted and nothing Blacklisted.
 $config['_sql_domainbook']      = NULL;
 $config['_sql_db_read_allowed'] = array('*');
