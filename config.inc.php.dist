@@ -1,0 +1,4 @@
+<?php
+
+//Set the name of the Global Address Book
+$config['wdg_sql_name'] = 'Global Address Book';

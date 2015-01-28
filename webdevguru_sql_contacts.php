@@ -22,9 +22,10 @@ class webdevguru_sql_contacts extends rcube_plugin {
 	}
 
 	public function address_sources($p) {
+		$this->load_config();
 		$p['sources']['company'] = array(
 			'id' => 'company',
-			'name' => 'Global Address Book',
+			'name' => rcube::get_instance()->config->get('wdg_sql_name', 'Global Address Book'),
 			'readonly' => true,
 			'autocomplete' => true,
 			'groups' => true,
