@@ -1,20 +1,41 @@
 <?php
 
-//Set the name of the Global Address Book
-$config['wdg_sql_name'] = 'Meow Address Book';
+//By Default NO BOOKS ARE ENABLED!
+//All Books Support the Whitelist of '*', it is implied.
+//Therefore a blacklist of '*' is not supported as it is like a WL of nothing.
 
-//Plugin Mode: (* is default).
-// 0: Show Users from the same Domain, but also any in the Whitelist, Seperate Address Books. Does not respect Blacklist.
-//    If Whitelisted == Current then Ignore. If you set the Whitelist to array('*') with this mode then it'll show all Domains.
-// 1: Show Users from the same Domain, but also any in the Whitelist, no grouping. Does not respect Blacklist.
-// 2: Show Users from the same Domain, but also any in the Whitelist, group by domain. Does not respect Blacklist.
-// 3: Show All Users inside the Address Book with no Groups. Does not respect Whitelist. Respects Blacklist.
-//*4: Show All Users inside the Address Book but group by domain. Does not respect Whitelist. Respects Blacklist.
-$config['wdg_sql_mode'] = 4;
+//The `Support Book` is an Address Book which will not get shown to members of itself.
+//The definition does not support any placeholders, can support multiple domains per book.
+//The definition can also support multiple books, the definition goes like:
+//	array(array('Support Book', 'webdevguru.co.uk', 'support.co.uk'), array(...))
+//Multidimensional Array, of no limit, first sub-element is the Specified Name of the Support Book.
+//	The rest of the elements are the Domains that should be within that Support Book.
+$config['_sql_supportbook']     = array();
 
-//Whitelist, If NULL then Whitelist is disabled, if Array containing strings then only the domains contained will get displayed. Not Implemented Yet.
-//If using Mode:0 then the KEY of each Entry will be the Individual Name of each Address Book. E.g. array('name' => 'domain.com');
-$config['wdg_sql_whitelist'] = NULL;
+//The `Domain Book` is an Address Book which will contain all the members which have the same
+//e-mail domain as the logged in user themself, the only values for configuration are:
+//NULL for disable, a string in an array as the name of the `Domain Book`.
+//READ Allowed is the list of domains (or *) which can see this Address Book.
+//DATA Allowed is the list of domains (or *) which can be listed in this Address Book.
+//READ Hidden is the list of domains (or *) which cannot see this Address Book.
+//DATA Hidden is the list of domains (or *) which cannot be listed in this Address Book.
+//Default for both rules is Everything/Everyone is whitelisted and nothing Blacklisted.
+$config['_sql_domainbook']      = NULL;
+$config['_sql_db_read_allowed'] = array('*');
+$config['_sql_db_read_hidden']  = array('');
 
-//Blacklist, if NULL then Blacklist is disabled, if Array containing strings then domains contained will not be displayed. Whitelist > Blacklist. Not Implemented Yet.
-$config['wdg_sql_blacklist'] = NULL;
+//The `Global Book` is an Address Book which will contain all the members of the Database View
+//Configure as NULL for disable or a string in an array as the name of the `Global Book`.
+//READ Allowed is the list of domains (or *) which can see this Address Book.
+//DATA Allowed is the list of domains (or *) which can be listed in this Address Book.
+//READ Hidden is the list of domains (or *) which cannot see this Address Book.
+//DATA Hidden is the list of domains (or *) which cannot be listed in this Address Book.
+//Default for both rules is Everything/Everyone is whitelisted and nothing Blacklisted.
+$config['_sql_globalbook']      = NULL;
+$config['_sql_globalbook_gp']   = true;
+$config['_sql_gb_read_allowed'] = array('*');
+$config['_sql_gb_data_allowed'] = array('*');
+$config['_sql_gb_read_hidden']  = array('');
+$config['_sql_gb_data_hidden']  = array('');
+
+//To be implemnted: `Custom Books`
