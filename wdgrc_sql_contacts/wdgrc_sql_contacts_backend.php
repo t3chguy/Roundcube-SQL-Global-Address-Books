@@ -31,6 +31,7 @@ class wdgrc_sql_contacts_backend extends rcube_addressbook {
 		$db = rcube::get_instance()->db;
 		$db->query('SELECT * FROM global_addressbook WHERE `ID`=?', $id);
 		if ($sql_arr = $db->fetch_assoc()) {
+			$sql_arr['email'] = explode(',', $sql_arr['email']);
 			$this->result = new rcube_result_set(1);
 			$this->result->add($sql_arr);
 		}
@@ -71,7 +72,10 @@ class wdgrc_sql_contacts_backend extends rcube_addressbook {
 
 		} else {$db->query('SELECT * FROM global_addressbook WHERE domain=?', $this->group_id); }
 
-		while ($ret = $db->fetch_assoc()) { $this->result->add($ret); }
+		while ($ret = $db->fetch_assoc()) {
+			$ret['email'] = explode(',', $ret['email']);
+			$this->result->add($ret);
+		}
 		return $this->result;
 
 	}

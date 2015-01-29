@@ -12,6 +12,14 @@ class wdgrc_sql_contacts extends rcube_plugin {
 		$this->add_hook('addressbooks_list', array($this, 'address_sources'));
 		$this->add_hook('addressbook_get', array($this, 'get_address_book'));
 		$this->load_config();
+		$config = rcmail::get_instance()->config;
+	    $sources= (array) $config->get('autocomplete_addressbooks', array());
+
+	    foreach (array_merge(array_column($config->get('_sql_supportbook', array()), 0), array('domain', 'global')) as $v) {
+		    if (!in_array($v, $sources)) { $sources[] = $v; }
+	    }
+
+	    $config->set('autocomplete_addressbooks', $sources);
 	}
 
 	private function touchbook($id, $name, $groups=false) {
