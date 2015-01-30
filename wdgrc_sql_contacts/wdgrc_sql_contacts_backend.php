@@ -64,7 +64,8 @@ class wdgrc_sql_contacts_backend extends rcube_addressbook {
 
 				default:
 					$d = rcmail::get_instance()->config->get('_sql_supportbook', array());
-					$f = array_flip(array_column($d, 0));
+					//$f = array_flip(array_column($d, 0));
+					$f = array_flip(wdgrc_sql_contacts::ac($d, 0));
 					array_shift($x = $d[$f[$this->name]]);
 					$q = 'SELECT * FROM global_addressbook WHERE domain IN (""' . str_repeat(', ?', count($x)) . ')';
 					call_user_func_array(array($db, 'query'), array_merge(array($q), $x));

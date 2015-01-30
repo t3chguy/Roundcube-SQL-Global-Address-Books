@@ -15,7 +15,7 @@ class wdgrc_sql_contacts extends rcube_plugin {
 		$config = rcmail::get_instance()->config;
 	    $sources= (array) $config->get('autocomplete_addressbooks', array());
 
-	    foreach (array_merge(array_column($config->get('_sql_supportbook', array()), 0), array('domain', 'global')) as $v) {
+	    foreach (array_merge(self::ac($config->get('_sql_supportbook', array()), 0), array('domain', 'global')) as $v) {
 		    if (!in_array($v, $sources)) { $sources[] = $v; }
 	    }
 
@@ -40,6 +40,22 @@ class wdgrc_sql_contacts extends rcube_plugin {
 		if (in_array($domain, $fc)) { return false; }
 		if ($cf === array('*') || in_array($domain, $cf)) { return true; }
 		return false;
+
+	}
+
+	public static function ac($arr, $id) {
+
+		if (function_exists('array_column')) {
+			return array_column($arr, $id);
+		}
+
+		foreach ($arr as $val) {
+			if (isset($val[$id])) {
+				$ret[] = $val[$id];
+			}
+		}
+
+		return $ret;
 
 	}
 
@@ -69,7 +85,7 @@ class wdgrc_sql_contacts extends rcube_plugin {
 
 	public function get_address_book($p) {
 
-		if (in_array($p['id'], array_column(rcmail::get_instance()->config->get('_sql_supportbook', array()), 0))) {
+		if (in_array($p['id'], self::ac(rcmail::get_instance()->config->get('_sql_supportbook', array()), 0))) {
 			$p['instance'] = new wdgrc_sql_contacts_backend($p['id']);
 		} elseif ($p['id'] === 'global') {
 			$p['instance'] = new wdgrc_sql_contacts_backend('global');
