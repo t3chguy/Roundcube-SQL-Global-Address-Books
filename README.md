@@ -7,7 +7,6 @@ Currently Natively Supporting:
 By Default ALL Books are DISABLED.
 You will have to enable them after you enable the plugin!
 
-***
 #Installation#
 
 1.  To Install, extract this archive and copy the folder
@@ -23,7 +22,9 @@ You will have to enable them after you enable the plugin!
 
 4.  Rename roundcube/plugins/wdgrc_sql_contacts/config.inc.php.dist to
     config.inc.php and fill in the configuration file.
-***
+
+
+#Support#
 
 The Configuration File has been annotated and should prove easy to understand.
 Feel free to contact me directly at postmaster@webdevguru.co.uk if you have any queries or requests!
