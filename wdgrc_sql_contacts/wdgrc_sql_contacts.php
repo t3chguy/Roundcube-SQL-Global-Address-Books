@@ -8,6 +8,8 @@ require_once(__DIR__ . '/wdgrc_sql_contacts_backend.php');
  */
 class wdgrc_sql_contacts extends rcube_plugin {
 
+	public $task = 'mail|addressbook';
+
 	public function init() {
 		$this->add_hook('addressbooks_list', array($this, 'address_sources'));
 		$this->add_hook('addressbook_get', array($this, 'get_address_book'));
