@@ -18,7 +18,7 @@ You will have to enable them after you enable the plugin!
     and run it on your `MySQL/MariaDB` Server as `root`, for example from `PHPMyAdmin`
 
 3.  And then add `wdgrc_sql_contacts` to your `roundcube/config/config.inc.php`
-    `$config['plugins'] = array(..., 'wdgrc_sql_contacts');``
+    so it looks like: `$config['plugins'] = array(..., 'wdgrc_sql_contacts');``
 
 4.  Rename `roundcube/plugins/wdgrc_sql_contacts/config.inc.php.dist` to
     `config.inc.php` and fill in the configuration file.
