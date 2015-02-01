@@ -1,11 +1,11 @@
 # RoundCube SQL Multi-Contacts
 Roundcube Plugin to create an Address Book from list of users in the SQL View.
 Currently Natively Supporting:
-+ iRedMail
++ iRedMail [Aliases Supported]
 + [anything you create a MySQL View for]
 
 By Default ALL Books are DISABLED.
-You will have to enable them after you enable the plugin!
+You will have to enable them in the config after you enable the plugin!
 
 #Installation#
 
@@ -32,7 +32,7 @@ This plugin is considered secure to use for the following reasons:
 + It uses the Internal Roundcube Address Book classes so if any bugs exist in them they will be patched accordingly, hopefully without breaking the functionality of this plugin.
 + This plugin features no accessible endpoints, it can be Modelled as a processing node, as it does not address the client directly. Ever. All the communication between DB -> Itself -> Client is managed and administered by the RoundCube Plugin Hooks+API.
 
-#####If you do not trust me, just look through the source code, it should be pretty straight forward and you can then rest assured#####
+#####If you do not trust me, just look through the source code, it should be pretty straight forward and you can then rest assured!#####
 
 #Support#
 
