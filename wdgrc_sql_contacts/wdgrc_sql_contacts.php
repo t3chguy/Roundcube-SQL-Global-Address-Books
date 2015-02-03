@@ -67,15 +67,15 @@ class wdgrc_sql_contacts extends rcube_plugin {
 		$dm     = $rc->user->get_username('domain');
 		$xc     = $rc->config;
 
-		if (($gb = $xc->get('_sql_globalbook', false)) && $this->wlbl('gb', $dm)) {
+		if (($gb = $xc->get('_sql_globalbook_name', false)) && $this->wlbl('gb', $dm)) {
 			$p['sources']['global'] = $this->touchbook('global', $gb, $xc->get('_sql_globalbook_gp', true));
 		}
 
-		if (($db = $xc->get('_sql_domainbook', false)) && $this->wlbl('db', $dm)) {
+		if (($db = $xc->get('_sql_domainbook_name', false)) && $this->wlbl('db', $dm)) {
 			$p['sources']['domain'] = $this->touchbook('domain', $db);
 		}
 
-		if ($sb = $xc->get('_sql_supportbook', array())) {
+		if ($sb = $xc->get('_sql_supportbook_list', array())) {
 			foreach ($sb as $csb) {
 				$csbn = array_shift($csb);
 				if (!in_array($dm, $csb)) { $p['sources'][$csbn]= $this->touchbook($csbn, $csbn);
