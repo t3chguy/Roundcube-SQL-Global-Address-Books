@@ -51,6 +51,7 @@ class wdgrc_sql_contacts extends rcube_plugin {
 			return array_column($arr, $id);
 		}
 
+		$ret = array();
 		foreach ($arr as $val) {
 			if (isset($val[$id])) {
 				$ret[] = $val[$id];
