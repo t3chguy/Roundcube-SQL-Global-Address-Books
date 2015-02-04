@@ -1,5 +1,5 @@
 <?php
-
+ini_set('display_errors', 'On');
 /**
  * Specialised Global Addressbook Contacts Class!
  *
@@ -54,24 +54,22 @@ class wdgrc_sql_contacts_backend extends rcube_addressbook {
 						$cd = '';
 						$cf = array();
 					} else { $cd = ' domain IN ("", ' . str_repeat(', ?', count($cf)) . ') AND'; }
-					$q  = 'SELECT * FROM global_addressbook WHERE' . $cd . ' domain NOT IN (""' . str_repeat(', ?', count($fc)) . ')';
+					$q  = 'SELECT * FROM global_addressbook WHERE' . $cd . ' (' . $this->filter .') AND domain NOT IN (""' . str_repeat(', ?', count($fc)) . ')';
 					call_user_func_array(array($db, 'query'), array_merge(array($q), $cf, $fc));
 					break;
 
 				case 'domain':
-					$db->query('SELECT * FROM global_addressbook WHERE domain=?', rcmail::get_instance()->user->get_username('domain'));
+					$db->query('SELECT * FROM global_addressbook WHERE (' . $this->filter .') AND domain=?', rcmail::get_instance()->user->get_username('domain'));
 					break;
 
 				default:
 					$d = rcmail::get_instance()->config->get('_sql_supportbook', array());
-					//$f = array_flip(array_column($d, 0));
 					$f = array_flip(wdgrc_sql_contacts::ac($d, 0));
 					array_shift($x = $d[$f[$this->name]]);
-					$q = 'SELECT * FROM global_addressbook WHERE domain IN (""' . str_repeat(', ?', count($x)) . ')';
-					call_user_func_array(array($db, 'query'), array_merge(array($q), $x));
+					$db->query('SELECT * FROM global_addressbook WHERE (' . $this->filter .') AND domain IN (' . $db->array2list($x) . ')');
 			}
 
-		} else {$db->query('SELECT * FROM global_addressbook WHERE domain=?', $this->group_id); }
+		} else { $db->query('SELECT * FROM global_addressbook WHERE (' . $this->filter .') AND domain=?', $this->group_id); }
 
 		while ($ret = $db->fetch_assoc()) {
 			$ret['email'] = explode(',', $ret['email']);
@@ -98,8 +96,75 @@ class wdgrc_sql_contacts_backend extends rcube_addressbook {
 
 	}
 
+	public function search($fields, $value, $strict=false, $select=true, $nocount=false, $required=array()) {
+		if (!is_array($fields)) { $fields = array($fields); }
+        if (!is_array($required) && !empty($required)) { $required = array($required); }
+
+
+        $db = rcube::get_instance()->db;
+        $where = $and_where = array();
+        $mode = intval($mode);
+        $WS = ' ';
+
+        foreach ($fields as $idx => $col) {
+
+        	if ($col == 'ID' || $col == $this->primary_key) {
+    			$ids     = !is_array($value) ? explode(self::SEPARATOR, $value) : $value;
+                $ids     = $db->array2list($ids, 'integer');
+                $where[] = 'c.' . $this->primary_key.' IN ('.$ids.')';
+                continue;
+            } else if ($col == '*') {
+        			$words = array();
+        			foreach (explode($WS, rcube_utils::normalize_string($value)) as $word) {
+        				switch ($mode) {
+        					case 1: // Strict
+        						$words[] = '(' . $db->ilike('words', $word . '%')
+		                            . ' OR ' . $db->ilike('words', '%' . $WS . $word . $WS . '%')
+		                            . ' OR ' . $db->ilike('words', '%' . $WS . $word) . ')';
+        						break;
+
+        					case 2: // Prefix
+        						$words[] = '(' . $db->ilike('words', $word . '%')
+                            		. ' OR ' . $db->ilike('words', '%' . $WS . $word . '%') . ')';
+								break;
+
+        					default: // Partial
+        						$words[] = $db->ilike('words', '%' . $word . '%');
+        						break;
+        				}
+        			}
+        			$where[] = '(' . join(' AND ', $words) . ')';
+        	} else {
+
+        	}
+
+        	foreach ($required as $col) {
+	            $and_where[] = $db->quote_identifier($col).' <> '.$db->quote('');
+	        }
+
+        //file_put_contents('/var/www/test.log', print_r([$fields, $value, $where], true));
+			/*if (!empty($where)) {
+	            // use AND operator for advanced searches
+	            $where = join(is_array($value) ? ' AND ' : ' OR ', $where);
+	        }*/
+	        if (!empty($and_where)) {
+	            $where = ($where ? "($where) AND " : '') . join(' AND ', $and_where);
+	        }
+
+	        if (!empty($where)) {
+	            $this->set_search_set($where);
+	            if ($select)
+	                $this->list_records(null, 0, $nocount);
+	            else
+	                $this->result = $this->count();
+	        }
+
+        }
+
+
+		return $this->list_records();
+	}
 	function get_group($group_id) { return $this->groups ? array('ID' => $group_id, 'name' => $group_id) : null; }
-	public function search($fields, $value, $strict=false, $select=true, $nocount=false, $required=array()) { return $this->list_records(); }
 	public function count() { return new rcube_result_set(1, ($this->list_page-1) * $this->page_size); }
 	public function get_result() { return $this->result; }
 	public function set_group($gid) {

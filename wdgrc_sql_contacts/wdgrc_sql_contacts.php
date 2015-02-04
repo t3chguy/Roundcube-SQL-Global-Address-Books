@@ -1,5 +1,5 @@
 <?php
-
+ini_set('display_errors', 'On');
 require_once(__DIR__ . '/wdgrc_sql_contacts_backend.php');
 /**
  * Specialised Global Addressbook Contacts Class!
