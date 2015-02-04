@@ -1,9 +1,9 @@
-CREATE 
-    ALGORITHM = UNDEFINED 
-    DEFINER = `root`@`localhost` 
+CREATE
+    ALGORITHM = UNDEFINED
+    DEFINER = `root`@`localhost`
     SQL SECURITY DEFINER
 VIEW `global_addressbook` AS
-    SELECT 
+    SELECT
         SUBSTR(UNIX_TIMESTAMP(`vmail`.`mailbox`.`created`),
             -(6)) AS `ID`,
         `vmail`.`mailbox`.`name` AS `name`,
@@ -14,6 +14,12 @@ VIEW `global_addressbook` AS
                 ' ',
                 -(1)) AS `surname`,
         `vmail`.`mailbox`.`username` AS `email`,
-        `vmail`.`mailbox`.`domain` AS `domain`
+        `vmail`.`mailbox`.`domain` AS `domain`,
+        (SELECT
+                CONCAT_WS(' ',
+                            `vmail`.`mailbox`.`name`,
+                            `email`,
+                            `vmail`.`mailbox`.`domain`)
+            ) AS `words`
     FROM
         `vmail`.`mailbox`;

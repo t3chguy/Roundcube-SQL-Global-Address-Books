@@ -21,6 +21,12 @@ VIEW `global_addressbook` AS
             WHERE
                 ((`vmail`.`alias`.`goto` = `vmail`.`mailbox`.`username`)
                     AND (`vmail`.`alias`.`address` LIKE '%@%'))) AS `email`,
-        `vmail`.`mailbox`.`domain` AS `domain`
+        `vmail`.`mailbox`.`domain` AS `domain`,
+        (SELECT
+                CONCAT_WS(' ',
+                            `vmail`.`mailbox`.`name`,
+                            REPLACE(`email`, ',', ' '),
+                            `vmail`.`mailbox`.`domain`)
+            ) AS `words`
     FROM
         `vmail`.`mailbox`
