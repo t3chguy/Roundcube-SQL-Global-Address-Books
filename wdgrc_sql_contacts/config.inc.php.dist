@@ -1,6 +1,8 @@
 <?php
 
 //By Default NO BOOKS ARE ENABLED!
+//Any line being Commented Out or Removed is the Same as Leaving it at Default, or Disabled.
+//So Remove Lines for any Books you do not wish to use to simplify this Configuration File.
 
 
 //The `Domain Book` is an Address Book which will contain all the members which have the same
