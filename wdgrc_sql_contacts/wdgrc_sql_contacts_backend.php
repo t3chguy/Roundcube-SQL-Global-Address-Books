@@ -146,18 +146,18 @@ class wdgrc_sql_contacts_backend extends rcube_addressbook {
 
         	}
 
-        	foreach ($required as $col) {
+        	/*foreach ($required as $col) {
 	            $and_where[] = $db->quote_identifier($col).' <> '.$db->quote('');
-	        }
+	        }*/
 
         //file_put_contents('/var/www/test.log', print_r([$fields, $value, $where], true));
 			/*if (!empty($where)) {
 	            // use AND operator for advanced searches
 	            $where = join(is_array($value) ? ' AND ' : ' OR ', $where);
 	        }*/
-	        if (!empty($and_where)) {
+	        /*if (!empty($and_where)) {
 	            $where = ($where ? "($where) AND " : '') . join(' AND ', $and_where);
-	        }
+	        }*/
 
 	        if (!empty($where)) {
 	            $this->set_search_set($where);
