@@ -1,5 +1,5 @@
 <?php
-ini_set('display_errors', 'On');
+
 require_once(__DIR__ . '/wdgrc_sql_contacts_backend.php');
 /**
  * Specialised Global Addressbook Contacts Class!
@@ -37,7 +37,7 @@ class wdgrc_sql_contacts extends rcube_plugin {
 	private function wlbl($id, $domain) {
 		$rc = rcmail::get_instance();
 		$cf = $rc->config->get('_sql_' . $id . '_read_allowed', array('*'));
-		$fc = $rc->config->get('_sql_' . $id . '_read_hidden', array(''));
+		$fc = $rc->config->get('_sql_' . $id . '_read_hidden', array());
 
 		if (in_array($domain, $fc)) { return false; }
 		if ($cf === array('*') || in_array($domain, $cf)) { return true; }

@@ -1,5 +1,5 @@
 <?php
-ini_set('display_errors', 'On');
+
 /**
  * Specialised Global Addressbook Contacts Class!
  *
@@ -49,27 +49,35 @@ class wdgrc_sql_contacts_backend extends rcube_addressbook {
 			switch ($this->name) {
 				case 'global':
 					$cf = rcmail::get_instance()->config->get('_sql_gb_data_allowed', array('*'));
-					$fc = rcmail::get_instance()->config->get('_sql_gb_data_hidden', array(''));
+					$fc = rcmail::get_instance()->config->get('_sql_gb_data_hidden', array());
 					if ($cf === array('*')) {
-						$cd = '';
 						$cf = array();
-					} else { $cd = ' domain IN ("", ' . str_repeat(', ?', count($cf)) . ') AND'; }
-					$q  = 'SELECT * FROM global_addressbook WHERE' . $cd . ' (' . $this->filter .') AND domain NOT IN (""' . str_repeat(', ?', count($fc)) . ')';
-					call_user_func_array(array($db, 'query'), array_merge(array($q), $cf, $fc));
+					} else { $x[] = 'domain IN (' . $db->array2list($cf) . ')'; }
+					if ($this->filter)  { $x[] = '(' . $this->filter .')'; }
+					if (count($fc) > 0) { $x[] = 'domain NOT IN (' . $db->array2list($fc) . ')'; }
+					$x = count($x) > 0 ? (' WHERE ' . implode(' AND ', $x)):'';
+					$db->query('SELECT * FROM global_addressbook' . $x);
 					break;
 
 				case 'domain':
-					$db->query('SELECT * FROM global_addressbook WHERE (' . $this->filter .') AND domain=?', rcmail::get_instance()->user->get_username('domain'));
+					$x = $this->filter ? (' (' . $this->filter . ') AND '):' ';
+					$db->query('SELECT * FROM global_addressbook WHERE' . $x . 'domain=?', rcmail::get_instance()->user->get_username('domain'));
 					break;
 
 				default:
 					$d = rcmail::get_instance()->config->get('_sql_supportbook', array());
 					$f = array_flip(wdgrc_sql_contacts::ac($d, 0));
-					array_shift($x = $d[$f[$this->name]]);
-					$db->query('SELECT * FROM global_addressbook WHERE (' . $this->filter .') AND domain IN (' . $db->array2list($x) . ')');
+					array_shift($z = $d[$f[$this->name]]);
+					if ($this->filter) { $x[] = '(' . $this->filter .')'; }
+					if (count($z) > 0) { $x[] = 'domain IN (' . $db->array2list($z) . ')'; }
+					$x = count($x)> 0 ? (' WHERE ' . implode(' AND ', $x)):'';
+					$db->query('SELECT * FROM global_addressbook' . $x);
 			}
 
-		} else { $db->query('SELECT * FROM global_addressbook WHERE (' . $this->filter .') AND domain=?', $this->group_id); }
+		} else {
+			$x = $this->filter ? (' (' . $this->filter . ') AND '):' ';
+			$db->query('SELECT * FROM global_addressbook WHERE' . $x . 'domain=?', $this->group_id);
+		}
 
 		while ($ret = $db->fetch_assoc()) {
 			$ret['email'] = explode(',', $ret['email']);
@@ -83,7 +91,7 @@ class wdgrc_sql_contacts_backend extends rcube_addressbook {
 		if (!$this->groups) { return array(); }
 		$rc = rcmail::get_instance();
 		$cf = $rc->config->get('_sql_gb_data_allowed', array('*'));
-		$fc = $rc->config->get('_sql_gb_data_hidden', array(''));
+		$fc = $rc->config->get('_sql_gb_data_hidden', array());
 
 		if ($cf === array('*')) {
 			$cf = array();

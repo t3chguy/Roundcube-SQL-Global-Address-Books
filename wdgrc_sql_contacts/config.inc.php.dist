@@ -37,10 +37,10 @@ $config['_sql_gb_read_allowed']  = array('*');
 $config['_sql_gb_data_allowed']  = array('*');
 
 //READ Hidden is the list of domains which cannot see this Address Book.
-$config['_sql_gb_read_hidden']   = array('');
+$config['_sql_gb_read_hidden']   = array();
 
 //DATA Hidden is the list of domains which cannot be listed in this Address Book.
-$config['_sql_gb_data_hidden']   = array('');
+$config['_sql_gb_data_hidden']   = array();
 
 
 
