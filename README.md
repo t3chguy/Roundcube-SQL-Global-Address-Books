@@ -4,8 +4,7 @@ Currently Natively Supporting:
 + iRedMail [Aliases Supported]
 + [anything you create a MySQL View for]
 
-By Default ALL Books are DISABLED.
-You will have to enable them in the config after you enable the plugin!
+By Default The `DomainBook` is enabled for all users. All other books will have to be configured prior to use.
 
 #Installation#
 

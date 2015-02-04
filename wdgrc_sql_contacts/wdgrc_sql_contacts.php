@@ -1,5 +1,5 @@
 <?php
-
+ini_set('display_errors', 1);
 require_once(__DIR__ . '/wdgrc_sql_contacts_backend.php');
 /**
  * Specialised Global Addressbook Contacts Class!
@@ -14,14 +14,33 @@ class wdgrc_sql_contacts extends rcube_plugin {
 		$this->add_hook('addressbooks_list', array($this, 'address_sources'));
 		$this->add_hook('addressbook_get', array($this, 'get_address_book'));
 		$this->load_config();
-		$config = rcmail::get_instance()->config;
+		$rcmail = rcmail::get_instance();
+		$config = $rcmail->config;
+		$domain = $rcmail->user->get_username('domain');
 	    $sources= (array) $config->get('autocomplete_addressbooks', array());
 
-	    foreach (array_merge(self::ac($config->get('_sql_supportbook', array()), 0), array('domain', 'global')) as $v) {
-		    if (!in_array($v, $sources)) { $sources[] = $v; }
+	    if ($this->is_enabled('domain')) { $x[] = 'domain'; }
+	    if ($this->is_enabled('global')) { $x[] = 'global'; }
+	    foreach ($config->get('_sql_supportbook', array()) as $z) {
+	    	$c = array_shift($z);
+	    	if (!in_array($domain, $z, true) && !in_array($c, $sources)) { $sources[] = $c; }
+	    }
+	    foreach (array('domain', 'global') as $v) {
+	    	if ($this->is_enabled($v) && !in_array($v, $sources)){ $sources[] = $v; }
 	    }
 
 	    $config->set('autocomplete_addressbooks', $sources);
+	}
+
+	private function is_enabled($book) {
+
+		$rc = rcmail::get_instance();
+
+		if ($rc->config->get('_sql_' . $book . 'book_name', false)) {
+			return $this->wlbl(substr($book, 0, 1) . 'b', $rc->user->get_username('domain'));
+		}
+
+		return false;
 	}
 
 	private function touchbook($id, $name, $groups=false) {

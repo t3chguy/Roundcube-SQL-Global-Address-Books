@@ -9,7 +9,7 @@ class wdgrc_sql_contacts_backend extends rcube_addressbook {
 
 	public $primary_key = 'ID';
 	public $readonly = true;
-	public $groups, $group_id;
+	public $group_id, $groups = false;
 
 	private $filter, $result, $name;
 
@@ -93,13 +93,29 @@ class wdgrc_sql_contacts_backend extends rcube_addressbook {
 		$cf = $rc->config->get('_sql_gb_data_allowed', array('*'));
 		$fc = $rc->config->get('_sql_gb_data_hidden', array());
 
+		if ($search) {
+			switch (intval($mode)) {
+	            case 1:
+	                $x = $rc->db->ilike('name', $search);
+	                break;
+	            case 2:
+	                $x = $rc->db->ilike('name', $search . '%');
+	                break;
+	            default:
+	                $x = $rc->db->ilike('name', '%' . $search . '%');
+            }
+            $x = ' WHERE ' . $x . ' ';
+		} else { $x = ' '; }
+
 		if ($cf === array('*')) {
 			$cf = array();
-			$db = rcube::get_instance()->db;
-			$db->query('SELECT domain FROM global_addressbook GROUP BY domain');
-			while ($ret = $db->fetch_assoc()) {$cf[] = $ret['domain']; }
+			$rc->db->query('SELECT domain FROM global_addressbook' . $x . 'GROUP BY domain');
+			while ($ret = $rc->db->fetch_assoc()) {$cf[] = $ret['domain']; }
 		}
+
+		$co = array();
 		foreach (array_diff($cf, $fc) as $v) { $co[] = ['ID' => $v, 'name' => $v]; }
+        file_put_contents('/var/www/test.log', print_r([$co, $search, $mode, $this->groups, $this->name, $this->group_id], true));
 		return $co;
 
 	}
@@ -110,7 +126,7 @@ class wdgrc_sql_contacts_backend extends rcube_addressbook {
 
 
         $db = rcube::get_instance()->db;
-        $where = $and_where = array();
+        $where = array();
         $mode = intval($mode);
         $WS = ' ';
 
@@ -143,28 +159,40 @@ class wdgrc_sql_contacts_backend extends rcube_addressbook {
         			}
         			$where[] = '(' . join(' AND ', $words) . ')';
         	} else {
+        		$val = is_array($value) ? $value[$idx] : $value;
 
+        		switch ($mode) {
+                    case 1: // strict
+                        $where[] = '(' . $db->quote_identifier($col) . ' = ' . $db->quote($val)
+                            . ' OR ' . $db->ilike($col, $val . $AS . '%')
+                            . ' OR ' . $db->ilike($col, '%' . $AS . $val . $AS . '%')
+                            . ' OR ' . $db->ilike($col, '%' . $AS . $val) . ')';
+                        break;
+                    case 2: // prefix
+                        $where[] = '(' . $db->ilike($col, $val . '%')
+                            . ' OR ' . $db->ilike($col, $AS . $val . '%') . ')';
+                        break;
+                    default: // partial
+                        $where[] = $db->ilike($col, '%' . $val . '%');
+                }
         	}
 
         	/*foreach ($required as $col) {
 	            $and_where[] = $db->quote_identifier($col).' <> '.$db->quote('');
 	        }*/
-
-        //file_put_contents('/var/www/test.log', print_r([$fields, $value, $where], true));
-			/*if (!empty($where)) {
+			if (!empty($where)) {
 	            // use AND operator for advanced searches
-	            $where = join(is_array($value) ? ' AND ' : ' OR ', $where);
-	        }*/
+	            //$where =
+	        }
 	        /*if (!empty($and_where)) {
 	            $where = ($where ? "($where) AND " : '') . join(' AND ', $and_where);
 	        }*/
 
 	        if (!empty($where)) {
-	            $this->set_search_set($where);
-	            if ($select)
+	            $this->set_search_set(join(is_array($value) ? ' AND ' : ' OR ', $where));
+	            /*if ($select) {
 	                $this->list_records(null, 0, $nocount);
-	            else
-	                $this->result = $this->count();
+	            } else { $this->result = $this->count(); */
 	        }
 
         }
