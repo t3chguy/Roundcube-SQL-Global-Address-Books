@@ -10,7 +10,7 @@ So Remove Lines for any Books you do not wish to use to simplify this Configurat
 The `Domain Book` is an Address Book which will contain all the members which have the same
 e-mail domain as the logged in user themself, the only values for configuration are:
 NULL for disable or a string as the name of the `Domain Book`.
-e.g:                                 = 'Domain Address Book'; */
+	e.g:                             = 'Domain Address Book'; */
 	$config['_sql_domainbook_name']  = 'Domain Address Book';
 
 
@@ -28,7 +28,7 @@ READ Hidden is the list of domains which cannot see this Address Book. */
 /*
 The `Global Book` is an Address Book which will contain all the members of the Database View
 Configure as NULL for disable or a string as the name of the `Global Book`.
-e.g:                                 = 'Global Book'; */
+	e.g:                             = 'Global Book'; */
 //	$config['_sql_globalbook_name']  = NULL;
 
 /*
@@ -60,9 +60,9 @@ The definition can also support multiple books, the definition goes like:
   array(array('Support Book', 'webdevguru.co.uk', 'support.co.uk'), array(...))
 Multidimensional Array, of no limit, first sub-element is the Specified Name of the Support Book.
 The rest of the elements are the Domains that should be within that Support Book.
-e.g:                                 = array( array('Support Book',
-                                                    'webdevguru.co.uk',
-                                                    'support.site.com') ); */
+	e.g:                             = array( array('Support Book',
+	                                                'webdevguru.co.uk',
+	                                                'support.site.com') ); */
 //	$config['_sql_supportbook_list'] = array();
 /* Warning, Support Books may be complicated to set up! */
 
