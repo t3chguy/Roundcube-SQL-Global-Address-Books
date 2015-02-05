@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Specialised Global Addressbook Contacts Class!
+ * Specialised Global Addressbook Contacts Backend Class!
  *
  * @author Michael Daniel Telatynski <postmaster@webdevguru.co.uk>
  */
-class wdgrc_sql_contacts_backend extends rcube_addressbook {
+class sql_global_backend extends rcube_addressbook {
 
 	public $primary_key = 'ID';
 	public $readonly = true;
@@ -66,7 +66,7 @@ class wdgrc_sql_contacts_backend extends rcube_addressbook {
 
 				default:
 					$d = rcmail::get_instance()->config->get('_sql_supportbook', array());
-					$f = array_flip(wdgrc_sql_contacts::ac($d, 0));
+					$f = array_flip(sql_global_addressbooks::ac($d, 0));
 					array_shift($z = $d[$f[$this->name]]);
 					if ($this->filter) { $x[] = '(' . $this->filter .')'; }
 					if (count($z) > 0) { $x[] = 'domain IN (' . $db->array2list($z) . ')'; }

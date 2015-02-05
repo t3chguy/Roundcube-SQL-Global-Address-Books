@@ -1,12 +1,12 @@
 <?php
 //ini_set('display_errors', 1);
-require_once(__DIR__ . '/wdgrc_sql_contacts_backend.php');
+require_once(__DIR__ . '/sql_global_backend.php');
 /**
  * Specialised Global Addressbook Contacts Class!
  *
  * @author Michael Daniel Telatynski <postmaster@webdevguru.co.uk>
  */
-class wdgrc_sql_contacts extends rcube_plugin {
+class sql_global_addressbooks extends rcube_plugin {
 
 	public $task = 'mail|addressbook';
 
@@ -108,11 +108,11 @@ class wdgrc_sql_contacts extends rcube_plugin {
 	public function get_address_book($p) {
 
 		if (in_array($p['id'], self::ac(rcmail::get_instance()->config->get('_sql_supportbook', array()), 0))) {
-			$p['instance'] = new wdgrc_sql_contacts_backend($p['id']);
+			$p['instance'] = new sql_global_backend($p['id']);
 		} elseif ($p['id'] === 'global') {
-			$p['instance'] = new wdgrc_sql_contacts_backend('global');
+			$p['instance'] = new sql_global_backend('global');
 			$p['instance']->groups = rcmail::get_instance()->config->get('_sql_globalbook_gp', true);
-		} elseif ($p['id'] === 'domain') { $p['instance'] = new wdgrc_sql_contacts_backend('domain'); }
+		} elseif ($p['id'] === 'domain') { $p['instance'] = new sql_global_backend('domain'); }
 
 		return $p;
 	}
