@@ -1,61 +1,74 @@
 <?php
 
-//By Default The DomainBook is Enabled and Shown to ALL Individually! All Configuration Options are Tabbed.
-//Any line being Commented Out or Removed is the Same as Leaving it at Default, or Disabled.
-//So Remove Lines for any Books you do not wish to use to simplify this Configuration File.
+/*
+By Default The DomainBook is Enabled and Shown to ALL Individually!
+All Configuration Options are Tabbed. Default Disabled Configuration starts '//'
+Any line being Commented Out or Removed is the Same as Leaving it at Default, or Disabled.
+So Remove Lines for any Books you do not wish to use to simplify this Configuration File. */
+
+/*
+The `Domain Book` is an Address Book which will contain all the members which have the same
+e-mail domain as the logged in user themself, the only values for configuration are:
+NULL for disable or a string as the name of the `Domain Book`.
+e.g:                                 = 'Domain Address Book'; */
+	$config['_sql_domainbook_name']  = 'Domain Address Book';
 
 
-//The `Domain Book` is an Address Book which will contain all the members which have the same
-//e-mail domain as the logged in user themself, the only values for configuration are:
-//NULL for disable or a string as the name of the `Domain Book`.
-//e.g:                                   = 'Domain Book';
-		$config['_sql_domainbook_name']  = 'Domain Book';
-
-
-//Default for both rules is Everything/Everyone is whitelisted and nothing Blacklisted.
-//READ Allowed is the list of domains (or *) which can see this Address Book.
-		//$config['_sql_db_read_allowed']  = array('*');
-
-//READ Hidden is the list of domains which cannot see this Address Book.
-		//$config['_sql_db_read_hidden']   = array('');
-
-
-
-
-//The `Global Book` is an Address Book which will contain all the members of the Database View
-//Configure as NULL for disable or a string as the name of the `Global Book`.
-		//$config['_sql_globalbook_name']  = NULL;
-//e.g:                                     = 'Global Book';
-
-//Should the Global Address Book be grouped?
-		//$config['_sql_globalbook_gp']    = true;
-
-
-//Default for both rule sets is Everything/Everyone is whitelisted and nothing Blacklisted.
-//READ Allowed is the list of domains (or *) which can see this Address Book.
-		//$config['_sql_gb_read_allowed']  = array('*');
-
-//DATA Allowed is the list of domains (or *) which can be listed in this Address Book.
-		//$config['_sql_gb_data_allowed']  = array('*');
-
-//READ Hidden is the list of domains which cannot see this Address Book.
-		//$config['_sql_gb_read_hidden']   = array();
-
-//DATA Hidden is the list of domains which cannot be listed in this Address Book.
-		//$config['_sql_gb_data_hidden']   = array();
+/*
+Default for both rules is Everything/Everyone is whitelisted and nothing Blacklisted.
+READ Allowed is the list of domains (or *) which can see this Address Book. */
+//	$config['_sql_db_read_allowed']  = array('*');
+/*
+READ Hidden is the list of domains which cannot see this Address Book. */
+//	$config['_sql_db_read_hidden']   = array('');
 
 
 
 
-//The `Support Book` is an Address Book which will not get shown to members of itself.
-//The definition does not support any placeholders, can support multiple domains per book.
-//The definition can also support multiple books, the definition goes like:
-//	array(array('Support Book', 'webdevguru.co.uk', 'support.co.uk'), array(...))
-//Multidimensional Array, of no limit, first sub-element is the Specified Name of the Support Book.
-//	The rest of the elements are the Domains that should be within that Support Book.
-		//$config['_sql_supportbook_list'] = array();
-//e.g:                           = array( array('Support Book', 'webdevguru.co.uk', 'support.site.com') );
-//Warning, Support Books may be complicated to set up!
+/*
+The `Global Book` is an Address Book which will contain all the members of the Database View
+Configure as NULL for disable or a string as the name of the `Global Book`.
+e.g:                                 = 'Global Book'; */
+//	$config['_sql_globalbook_name']  = NULL;
+
+/*
+Should the Global Address Book be grouped? */
+//	$config['_sql_globalbook_gp']    = true;
 
 
-//To be implemnted: `Custom Books`
+/*
+Default for both rule sets is Everything/Everyone is whitelisted and nothing Blacklisted.
+READ Allowed is the list of domains (or *) which can see this Address Book. */
+//	$config['_sql_gb_read_allowed']  = array('*');
+/*
+DATA Allowed is the list of domains (or *) which can be listed in this Address Book. */
+//	$config['_sql_gb_data_allowed']  = array('*');
+/*
+READ Hidden is the list of domains which cannot see this Address Book. */
+//	$config['_sql_gb_read_hidden']   = array();
+/*
+DATA Hidden is the list of domains which cannot be listed in this Address Book. */
+//	$config['_sql_gb_data_hidden']   = array();
+
+
+
+
+/*
+The `Support Book` is an Address Book which will not get shown to members of itself.
+The definition does not support any placeholders, can support multiple domains per book.
+The definition can also support multiple books, the definition goes like:
+  array(array('Support Book', 'webdevguru.co.uk', 'support.co.uk'), array(...))
+Multidimensional Array, of no limit, first sub-element is the Specified Name of the Support Book.
+The rest of the elements are the Domains that should be within that Support Book.
+e.g:                                 = array( array('Support Book',
+                                                    'webdevguru.co.uk',
+                                                    'support.site.com') ); */
+//	$config['_sql_supportbook_list'] = array();
+/* Warning, Support Books may be complicated to set up! */
+
+
+
+
+/*
+To be implemnted: `Custom Books`
+*/
