@@ -1,4 +1,4 @@
-# RoundCube SQL Multi-Contacts
+# RoundCube SQL Global Address Books
 Roundcube Plugin to create an Address Book from list of users in the SQL View.
 Currently Natively Supporting:
 + iRedMail [Aliases Supported]
