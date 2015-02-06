@@ -1,9 +1,14 @@
 <?php
 
 /**
- * Specialised Global Addressbook Contacts Backend Class!
+ * Specialised Global Addressbook Contacts Class Backend!
  *
  * @author Michael Daniel Telatynski <postmaster@webdevguru.co.uk>
+ * @copyright 2015 Web Development Guru
+ * @license http://bit.ly/16ABH2R
+ * @license MIT
+ *
+ * @version 2.5.0
  */
 class sql_global_backend extends rcube_addressbook {
 
@@ -176,17 +181,6 @@ class sql_global_backend extends rcube_addressbook {
                         $where[] = $db->ilike($col, '%' . $val . '%');
                 }
         	}
-
-        	/*foreach ($required as $col) {
-	            $and_where[] = $db->quote_identifier($col).' <> '.$db->quote('');
-	        }*/
-			if (!empty($where)) {
-	            // use AND operator for advanced searches
-	            //$where =
-	        }
-	        /*if (!empty($and_where)) {
-	            $where = ($where ? "($where) AND " : '') . join(' AND ', $and_where);
-	        }*/
 
 	        if (!empty($where)) {
 	            $this->set_search_set(join(is_array($value) ? ' AND ' : ' OR ', $where));

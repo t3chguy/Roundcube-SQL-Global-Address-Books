@@ -13,14 +13,13 @@ NULL for disable or a string as the name of the `Domain Book`.
 	e.g:                             = 'Domain Address Book'; */
 	$config['_sql_domainbook_name']  = 'Domain Address Book';
 
-
 /*
 Default for both rules is Everything/Everyone is whitelisted and nothing Blacklisted.
 READ Allowed is the list of domains (or *) which can see this Address Book. */
 //	$config['_sql_db_read_allowed']  = array('*');
 /*
 READ Hidden is the list of domains which cannot see this Address Book. */
-//	$config['_sql_db_read_hidden']   = array('');
+//	$config['_sql_db_read_hidden']   = array();
 
 
 
@@ -28,13 +27,12 @@ READ Hidden is the list of domains which cannot see this Address Book. */
 /*
 The `Global Book` is an Address Book which will contain all the members of the Database View
 Configure as NULL for disable or a string as the name of the `Global Book`.
-	e.g:                             = 'Global Book'; */
-//	$config['_sql_globalbook_name']  = NULL;
+	e.g:                             = 'Global Address Book'; */
+//	$config['_sql_globalbook_name']  = 'Global Address Book';
 
 /*
 Should the Global Address Book be grouped? */
 //	$config['_sql_globalbook_gp']    = true;
-
 
 /*
 Default for both rule sets is Everything/Everyone is whitelisted and nothing Blacklisted.
@@ -60,7 +58,7 @@ The definition can also support multiple books, the definition goes like:
   array(array('Support Book', 'webdevguru.co.uk', 'support.co.uk'), array(...))
 Multidimensional Array, of no limit, first sub-element is the Specified Name of the Support Book.
 The rest of the elements are the Domains that should be within that Support Book.
-	e.g:                             = array( array('Support Book',
+	e.g:                             = array( array('Support Contacts',
 	                                                'webdevguru.co.uk',
 	                                                'support.site.com') ); */
 //	$config['_sql_supportbook_list'] = array();

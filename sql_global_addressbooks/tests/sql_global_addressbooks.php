@@ -1,11 +1,11 @@
 <?php
 
-class ExampleAddressbook_Plugin extends PHPUnit_Framework_TestCase
+class sql_global_addressbooks_Plugin extends PHPUnit_Framework_TestCase
 {
 
     function setUp()
     {
-        include_once dirname(__FILE__) . '/../webdevguru_contacts.php';
+        include_once dirname(__FILE__) . '/../sql_global_backend.php';
     }
 
     /**
@@ -14,9 +14,9 @@ class ExampleAddressbook_Plugin extends PHPUnit_Framework_TestCase
     function test_constructor()
     {
         $rcube  = rcube::get_instance();
-        $plugin = new example_addressbook($rcube->api);
+        $plugin = new sql_global_addressbooks($rcube->api);
 
-        $this->assertInstanceOf('example_addressbook', $plugin);
+        $this->assertInstanceOf('sql_global_addressbooks', $plugin);
         $this->assertInstanceOf('rcube_plugin', $plugin);
     }
 }

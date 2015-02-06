@@ -4,7 +4,16 @@ require_once(__DIR__ . '/sql_global_backend.php');
 /**
  * Specialised Global Addressbook Contacts Class!
  *
+ * Roundcube Plugin to create an Address Book from list of users in the SQL View.
+ * Currently Natively Supporting:
+ *  + iRedMail [Aliases Supported]
+ *
  * @author Michael Daniel Telatynski <postmaster@webdevguru.co.uk>
+ * @copyright 2015 Web Development Guru
+ * @license http://bit.ly/16ABH2R
+ * @license MIT
+ *
+ * @version 2.5.0
  */
 class sql_global_addressbooks extends rcube_plugin {
 
@@ -12,8 +21,9 @@ class sql_global_addressbooks extends rcube_plugin {
 
 	public function init() {
 		$this->add_hook('addressbooks_list', array($this, 'address_sources'));
-		$this->add_hook('addressbook_get', array($this, 'get_address_book'));
+		$this->add_hook('addressbook_get',   array($this, 'get_address_book'));
 		$this->load_config();
+
 		$rcmail = rcmail::get_instance();
 		$config = $rcmail->config;
 		$domain = $rcmail->user->get_username('domain');
@@ -56,7 +66,7 @@ class sql_global_addressbooks extends rcube_plugin {
 	private function wlbl($id, $domain) {
 		$rc = rcmail::get_instance();
 		$cf = $rc->config->get('_sql_' . $id . '_read_allowed', array('*'));
-		$fc = $rc->config->get('_sql_' . $id . '_read_hidden', array());
+		$fc = $rc->config->get('_sql_' . $id . '_read_hidden',  array());
 
 		if (in_array($domain, $fc)) { return false; }
 		if ($cf === array('*') || in_array($domain, $cf)) { return true; }
@@ -107,11 +117,11 @@ class sql_global_addressbooks extends rcube_plugin {
 
 	public function get_address_book($p) {
 
-		if (in_array($p['id'], self::ac(rcmail::get_instance()->config->get('_sql_supportbook', array()), 0))) {
-			$p['instance'] = new sql_global_backend($p['id']);
-		} elseif ($p['id'] === 'global') {
+		if ($p['id'] === 'global') {
 			$p['instance'] = new sql_global_backend('global');
 			$p['instance']->groups = rcmail::get_instance()->config->get('_sql_globalbook_gp', true);
+		} elseif (in_array($p['id'], self::ac(rcmail::get_instance()->config->get('_sql_supportbook', array()), 0))) {
+			$p['instance'] = new sql_global_backend($p['id']);
 		} elseif ($p['id'] === 'domain') { $p['instance'] = new sql_global_backend('domain'); }
 
 		return $p;
