@@ -6,6 +6,10 @@ Currently Natively Supporting:
 
 By Default The `DomainBook` is enabled for all users. All other books will have to be configured prior to use.
 
+#License#
+
+This software adheres to the MIT License, please see LICENSE File!
+
 #Installation#
 
 1.  To Install, extract this archive and copy the folder
@@ -20,6 +24,18 @@ By Default The `DomainBook` is enabled for all users. All other books will have 
 
 4.  Rename `roundcube/plugins/sql_global_addressbooks/config.inc.php.dist` to
     `config.inc.php` and fill in the configuration file.
+
+
+#Book Types#
+
+###Domain Book###
+This Book Type shows all users which are in the same Domain Realm as the Authenticated User.
+
+###Global Book###
+This Book Type shows all users, with the exception of the blacklisted ones.
+
+###Support Book###
+This Book Type shows a specific set of domains, to all users except those which are part of any of the domains in the set.
 
 
 #Security#
