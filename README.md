@@ -30,13 +30,18 @@ This software adheres to the MIT License, please see LICENSE File!
 
 ###Domain Book###
 This Book Type shows all users which are in the same Domain Realm as the Authenticated User.
+Supports Whitelist and Blacklist to select which users are given this Book.
 
 ###Global Book###
 This Book Type shows all users, with the exception of the blacklisted ones.
+Supports Whitelist and Blacklist of which domains to include in book, for example if you'd like to hide a domain from the Global Book then just add it to the `_sql_gb_data_hidden` array.
+Supports Whitelist and Blacklist to select which users are given this book also.
 
 ###Support Book###
 This Book Type shows a specific set of domains, to all users except those which are part of any of the domains in the set.
+This is the most complicated Book Type in the set, and probably won't get used, I do use it personally which is why its included.
 
+######If you have any other Book Type Ideas, open them up as an Issue Thread######
 
 #Security#
 
