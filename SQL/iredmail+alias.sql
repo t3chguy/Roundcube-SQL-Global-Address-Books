@@ -9,12 +9,6 @@ VIEW `global_addressbook` AS
                 UNIX_TIMESTAMP(`vmail`.`mailbox`.`created`),
             -(8)) AS `ID`,
         `vmail`.`mailbox`.`name` AS `name`,
-        SUBSTRING_INDEX(SUBSTRING_INDEX(`vmail`.`mailbox`.`name`, ' ', 1),
-                ' ',
-                -(1)) AS `firstname`,
-        SUBSTRING_INDEX(SUBSTRING_INDEX(`vmail`.`mailbox`.`name`, ' ', -(1)),
-                ' ',
-                -(1)) AS `surname`,
         (SELECT
                 GROUP_CONCAT(`vmail`.`alias`.`address`
                         SEPARATOR ',')
@@ -23,12 +17,6 @@ VIEW `global_addressbook` AS
             WHERE
                 ((`vmail`.`alias`.`goto` = `vmail`.`mailbox`.`username`)
                     AND (`vmail`.`alias`.`address` LIKE '%@%'))) AS `email`,
-        `vmail`.`mailbox`.`domain` AS `domain`,
-        (SELECT
-                CONCAT_WS(' ',
-                            `vmail`.`mailbox`.`name`,
-                            REPLACE(`email`, ',', ' '),
-                            `vmail`.`mailbox`.`domain`)
-            ) AS `words`
+        `vmail`.`mailbox`.`domain` AS `domain`
     FROM
         `vmail`.`mailbox`

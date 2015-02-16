@@ -86,6 +86,9 @@ class sql_global_backend extends rcube_addressbook {
 
 		while ($ret = $db->fetch_assoc()) {
 			$ret['email'] = explode(',', $ret['email']);
+			//$names = explode(' ', $ret['name']);
+			//$ret['surname'] = array_push($names);
+			//$ret['firsname']= implode(' ', $names);
 			$this->result->add($ret);
 		}
 		return $this->result;
@@ -101,13 +104,13 @@ class sql_global_backend extends rcube_addressbook {
 		if ($search) {
 			switch (intval($mode)) {
 	            case 1:
-	                $x = $rc->db->ilike('name', $search);
+	                $x = $rc->db->ilike('domain', $search);
 	                break;
 	            case 2:
-	                $x = $rc->db->ilike('name', $search . '%');
+	                $x = $rc->db->ilike('domain', $search . '%');
 	                break;
 	            default:
-	                $x = $rc->db->ilike('name', '%' . $search . '%');
+	                $x = $rc->db->ilike('domain', '%' . $search . '%');
             }
             $x = ' WHERE ' . $x . ' ';
 		} else { $x = ' '; }
@@ -138,7 +141,7 @@ class sql_global_backend extends rcube_addressbook {
         foreach ($fields as $idx => $col) {
 
         	if ($col == 'ID' || $col == $this->primary_key) {
-    			$ids     = !is_array($value) ? explode(self::SEPARATOR, $value) : $value;
+    			$ids     = !is_array($value) ? explode(',', $value) : $value;
                 $ids     = $db->array2list($ids, 'integer');
                 $where[] = 'c.' . $this->primary_key.' IN ('.$ids.')';
                 continue;
@@ -147,23 +150,30 @@ class sql_global_backend extends rcube_addressbook {
         			foreach (explode($WS, rcube_utils::normalize_string($value)) as $word) {
         				switch ($mode) {
         					case 1: // Strict
-        						$words[] = '(' . $db->ilike('words', $word . '%')
-		                            . ' OR ' . $db->ilike('words', '%' . $WS . $word . $WS . '%')
-		                            . ' OR ' . $db->ilike('words', '%' . $WS . $word) . ')';
+        						$words[]='(' . $db->ilike('name', $word . '%')
+		                            . ' OR ' . $db->ilike('email',$word . '%')
+		                            . ' OR ' . $db->ilike('name', '%' . $WS . $word . $WS . '%')
+		                            . ' OR ' . $db->ilike('email','%' . $WS . $word . $WS . '%')
+		                            . ' OR ' . $db->ilike('name', '%' . $WS . $word)
+		                            . ' OR ' . $db->ilike('email','%' . $WS . $word). ')';
         						break;
 
         					case 2: // Prefix
-        						$words[] = '(' . $db->ilike('words', $word . '%')
-                            		. ' OR ' . $db->ilike('words', '%' . $WS . $word . '%') . ')';
+        						$words[]='(' . $db->ilike('name', $word . '%')
+                            		. ' OR ' . $db->ilike('email',$word . '%')
+                            		. ' OR ' . $db->ilike('name', '%' . $WS . $word . '%')
+                            		. ' OR ' . $db->ilike('email','%' . $WS . $word . '%') . ')';
 								break;
 
         					default: // Partial
-        						$words[] = $db->ilike('words', '%' . $word . '%');
+        						$words[]='(' . $db->ilike('name', '%' . $word . '%')
+        						    . ' OR ' . $db->ilike('email','%' . $word . '%') . ')';
         						break;
         				}
         			}
         			$where[] = '(' . join(' AND ', $words) . ')';
-        	} else {
+        	//} else {
+        	} elseif ($col !== 'firstname' && $col !== 'surname') {
         		$val = is_array($value) ? $value[$idx] : $value;
 
         		switch ($mode) {

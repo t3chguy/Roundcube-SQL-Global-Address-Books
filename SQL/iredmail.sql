@@ -9,19 +9,7 @@ VIEW `global_addressbook` AS
                 UNIX_TIMESTAMP(`vmail`.`mailbox`.`created`),
             -(8)) AS `ID`,
         `vmail`.`mailbox`.`name` AS `name`,
-        SUBSTRING_INDEX(SUBSTRING_INDEX(`vmail`.`mailbox`.`name`, ' ', 1),
-                ' ',
-                -(1)) AS `firstname`,
-        SUBSTRING_INDEX(SUBSTRING_INDEX(`vmail`.`mailbox`.`name`, ' ', -(1)),
-                ' ',
-                -(1)) AS `surname`,
         `vmail`.`mailbox`.`username` AS `email`,
-        `vmail`.`mailbox`.`domain` AS `domain`,
-        (SELECT
-                CONCAT_WS(' ',
-                            `vmail`.`mailbox`.`name`,
-                            `email`,
-                            `vmail`.`mailbox`.`domain`)
-            ) AS `words`
+        `vmail`.`mailbox`.`domain` AS `domain`
     FROM
         `vmail`.`mailbox`;
