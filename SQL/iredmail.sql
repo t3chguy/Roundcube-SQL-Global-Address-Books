@@ -4,8 +4,10 @@ CREATE
     SQL SECURITY DEFINER
 VIEW `global_addressbook` AS
     SELECT
-        SUBSTR(UNIX_TIMESTAMP(`vmail`.`mailbox`.`created`),
-            -(6)) AS `ID`,
+        SUBSTR((UNIX_TIMESTAMP(`vmail`.`mailbox`.`passwordlastchange`) +
+                UNIX_TIMESTAMP(`vmail`.`mailbox`.`modified`)) -
+                UNIX_TIMESTAMP(`vmail`.`mailbox`.`created`),
+            -(8)) AS `ID`,
         `vmail`.`mailbox`.`name` AS `name`,
         SUBSTRING_INDEX(SUBSTRING_INDEX(`vmail`.`mailbox`.`name`, ' ', 1),
                 ' ',
