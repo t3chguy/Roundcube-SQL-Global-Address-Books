@@ -119,8 +119,8 @@ class sql_global_backend extends rcube_addressbook {
 		}
 
 		$co = array();
-		foreach (array_diff($cf, $fc) as $v) { $co[] = ['ID' => $v, 'name' => $v]; }
-        file_put_contents('/var/www/test.log', print_r([$co, $search, $mode, $this->groups, $this->name, $this->group_id], true));
+		foreach (array_diff($cf, $fc) as $v) { $co[] = array('ID' => $v, 'name' => $v); }
+        //file_put_contents('/var/www/test.log', print_r([$co, $search, $mode, $this->groups, $this->name, $this->group_id], true));
 		return $co;
 
 	}
