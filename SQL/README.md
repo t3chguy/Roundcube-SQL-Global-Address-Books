@@ -6,8 +6,8 @@ The View has to be in the following layout:
 + email is a comma seperated list [alias support] of e-mail addresses, the first e-mail is the primary and will be preferred by Roundcube but others will be shown too.
 + domain is used for DomainBooks but is required also for the Whitelist and Blacklist so the column must exist, it allows Distrubution Lists to work properly within groups of the DomainBook in Roundcube also.
 
-|    ID    | name                      | email                          | domain           |
-|:--------:|---------------------------|--------------------------------|------------------|
+| ID       | name                      | email                          | domain           |
+|---------:|---------------------------|--------------------------------|------------------|
 | 21981839 | First Middle Last         | foo@bar.com                    | bar.com          |
 | 1        | Michael Daniel Telatynski | postmaster@webdevguru.co.uk    | webdevguru.co.uk |
 | 2        | John Smith                | john@smith.com,owner@smith.com | smith.com        |
