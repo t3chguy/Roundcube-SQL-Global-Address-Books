@@ -12,9 +12,9 @@
  */
 class sql_global_backend extends rcube_addressbook {
 
+	public $group_id, $groups = false;
 	public $primary_key = 'ID';
 	public $readonly = true;
-	public $group_id, $groups = false;
 
 	private $filter, $result, $name;
 

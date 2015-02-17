@@ -2,7 +2,7 @@
 Roundcube Plugin to create an Address Book from list of users in the SQL View.
 Currently Natively Supporting:
 + iRedMail [Aliases Supported]
-+ [anything you create a MySQL View for]
++ [anything you create a MySQL View for (Check out SQL/README.md)]
 
 By Default The `DomainBook` is enabled for all users. All other books will have to be configured prior to use.
 
