@@ -1,3 +1,5 @@
+#Custom SQL View Guidelines and Tips#
+
 The View has to be in the following layout:
 + ID has to be a Unique Integer but does not have to be ordered or anything else, just unique and static, must not change per user [but can change if the user changes, so can be based on the timestamp of user modification/creation]
 + name is any string that will be displayed as the name, it will also be searched in when running searches both in autocomplete and the addressbook search module.
