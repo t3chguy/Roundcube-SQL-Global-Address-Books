@@ -1,14 +1,16 @@
 --
 -- Notes:
 --
--- * if you're running RHEL/CentOS 6 or 7, don't forget to uncomment lines
---   under `Required by RHEL/CentOS X` to create dblink function.
+-- * Don't forget to uncomment lines under `Required by PostgreSQL x` to
+--   create dblink function, If you're running PostgreSQL 8.x, you can find
+--   `dblink.sql` in package 'postgresql-contrib'.
 --
 -- * of course you should replace `xxx` in below sample SQL command by the
 --   real SQL username/password/database name.
 --
--- * it's better to use SQL user `vmail` which has read-only permission to
---   `vmail` database. Don't use `vmailadmin` or `postgres` user.
+-- * it's better to use a SQL user who has read-only permission on the
+--   source database. On iRedMail server, please use `vmail` user, do NOT
+--   use `vmailadmin` or `postgres` user.
 
 --
 -- Known issue on iRedMail server:
@@ -20,18 +22,18 @@
 --   fixes this issue.
 
 --
--- Required by RHEL/CentOS 6.
+-- Required by PostgreSQL 8.x (RHEL/CentOS 6)
 --
 -- CREATE LANGUAGE plpgsql;                                                           
 -- \i /usr/share/pgsql/contrib/dblink.sql;
 
 --
--- Required by RHEL/CentOS 7
+-- Required by PostgreSQL 9.x (RHEL/CentOS 7, Debian 7, Ubuntu 14.04, ...)
 --
 -- CREATE EXTENSION dblink;
 
-CREATE VIEW global_addressbook AS
+CREATE VIEW global_addressbooks AS
     SELECT * FROM dblink('host=127.0.0.1 port=5432 user=vmail password=xxx dbname=vmail', 'SELECT extract(epoch FROM created), name, username, domain FROM mailbox WHERE active=1')
     AS global_addressbook ("ID" BIGINT, name VARCHAR(255), email VARCHAR(255), domain VARCHAR(255));
 
-ALTER TABLE global_addressbook OWNER TO roundcube;
+ALTER TABLE global_addressbooks OWNER TO roundcube;

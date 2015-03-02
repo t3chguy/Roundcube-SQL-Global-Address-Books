@@ -6,6 +6,16 @@ Currently Natively Supporting:
 
 By Default The `DomainBook` is enabled for all users. All other books will have to be configured prior to use.
 
+# Screenshots
+
+Compose new email:
+
+![](./screenshots/compose.png)
+
+Address Book view:
+
+![](./screenshots/address.book.png)
+
 #License#
 
 This software adheres to the MIT License, please see LICENSE File!
