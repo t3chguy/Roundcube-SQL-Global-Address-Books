@@ -45,7 +45,7 @@ This software adheres to the MIT License, please see LICENSE File!
 
 3. under `plugins/sql_global_addressbooks/`, copy `config.inc.php.dist` to
    `config.inc.php`. It will enable per-domain address book with default
-   setting. if you need more control, please open it, read the commend, and
+   settings. If you need more control, please open it, read the comments, and
    adjust the settings to match your need.
 
 4. Enable this plugin in Roundcube config file `roundcubemail/config/config.inc.php`.
