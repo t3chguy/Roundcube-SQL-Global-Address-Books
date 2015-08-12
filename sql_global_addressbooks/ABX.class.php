@@ -4,11 +4,13 @@
 
 		protected $show = array();
 		protected $hide = array();
+		protected $db;
 
-		protected $name, $db;
+		public $name, $id;
 
 		public function __construct($name) {
 			$this->db   = rcube::get_instance()->db;
+			$this->id   = md5($name);
 			$this->name = $name;
 		}
 
@@ -70,6 +72,12 @@
 	}
 
 	class ABX_Global extends ABX {
+
+
+
+	}
+
+	class ABX_Domain extends ABX {
 
 
 
