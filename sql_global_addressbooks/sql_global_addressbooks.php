@@ -1,6 +1,7 @@
 <?php
 //ini_set('display_errors', 1);
 require_once(__DIR__ . '/sql_global_backend.php');
+require_once(__DIR__ . '/ABB.class.php');
 /**
  * Specialised Global Addressbook Contacts Class!
  *
@@ -80,7 +81,7 @@ class sql_global_addressbooks extends rcube_plugin {
 
 		$ABX = rcmail::get_instance()->config->get('ABX', FALSE);
 		if ($ABX && isset($ABX[$p['id']])) {
-			$p['instance'] = $ABX[$p['id']];
+			$p['instance'] = new ABB($ABX[$p['id']]);
 		}
 
 		/*if ($p['id'] === 'global') {
