@@ -1,6 +1,6 @@
 <?php
 
-	class ABX {
+	abstract class ABX {
 
 		protected $show = array();
 		protected $hide = array();
@@ -47,5 +47,30 @@
 				$this->hide[]= $entry;
 			}
 		}
+
+		public function valid($email) {
+			$domain = explode('@', $email, 2);
+			if (length($this->show)) {
+				if (in_array($domain[1], $this->true, TRUE) ||
+				    in_array($email,     $this->true, TRUE) ) {
+					return TRUE;
+				}
+				return FALSE;
+			} elseif (length($this->hide)) {
+				if (in_array($domain[1], $this->hide, TRUE) ||
+				    in_array($email,     $this->hide, TRUE) ) {
+					return FALSE;
+				}
+			}
+			return TRUE;
+		}
+
+		abstract public function get();
+
+	}
+
+	class ABX_Global extends ABX {
+
+
 
 	}
