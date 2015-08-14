@@ -2,7 +2,7 @@
 
 	class MultiBook_Backend extends rcube_addressbook {
 
-		public $group_id, $groups = false;
+		public $result, $group_id, $groups = false;
 		public $primary_key = 'ID';
 		public $readonly = true;
 
@@ -91,7 +91,6 @@
 		        }
 
 	        }
-
 
 			return $this->list_records();
 		}

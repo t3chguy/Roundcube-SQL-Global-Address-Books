@@ -7,7 +7,7 @@
 		protected $hide = array();
 		protected $db;
 
-		public $name, $id, $result, $groups = FALSE;
+		public $name, $id, $groups = FALSE;
 
 		public function __construct(&$config, $name) {
 			$this->db   = rcube::get_instance()->db;
