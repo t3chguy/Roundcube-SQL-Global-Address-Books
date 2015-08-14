@@ -6,10 +6,10 @@
 			$this->result = $this->count();
 
 			if (empty($this->group_id)) {
-				$x = $this->filter ? ('WHERE (' . $this->filter . ')'):'';
+				$x = $this->filter ? ('WHERE ' . $this->filter):'';
 				$this->db->query("SELECT * FROM MultiBook {$x}");
 			} else {
-				$x = $this->filter ? (' (' . $this->filter . ') AND '):'';
+				$x = $this->filter ? ($this->filter . ' AND '):'';
 				$this->db->query("SELECT * FROM MultiBook WHERE {$x} domain=?", $this->group_id);
 			}
 
