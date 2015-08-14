@@ -119,7 +119,6 @@
 			if (!is_array($fields)) { $fields = array($fields); }
 	        if (!is_array($required) && !empty($required)) { $required = array($required); }
 
-
 	        $where = array();
 	        $mode = intval($mode);
 	        $WS = ' ';
@@ -133,7 +132,7 @@
 	                continue;
 	            } else if ($col == '*') {
 	        			$words = array();
-	        			foreach (explode($WS, rcube_utils::normalize_string($value)) as $word) {
+	        			foreach (explode($WS, $value) as $word) {
 	        				switch ($mode) {
 	        					case 1: // Strict
 	        						$words[]='(' . $this->db->ilike('name', $word . '%')
