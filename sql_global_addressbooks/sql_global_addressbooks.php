@@ -1,6 +1,6 @@
 <?php
 ini_set('display_errors', 1);
-require_once(__DIR__ . '/MultiBook_Backend.class.php');
+
 /**
  * Specialised Global Addressbook Contacts Class!
  *
@@ -80,7 +80,7 @@ class sql_global_addressbooks extends rcube_plugin {
 
 		$MultiBook = rcmail::get_instance()->config->get('MultiBook', FALSE);
 		if ($MultiBook && isset($MultiBook[$p['id']])) {
-			$p['instance'] = new MultiBook_Backend($MultiBook[$p['id']]);
+			$p['instance'] = $MultiBook[$p['id']];
 		}
 		return $p;
 

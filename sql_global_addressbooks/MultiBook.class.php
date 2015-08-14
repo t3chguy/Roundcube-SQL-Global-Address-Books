@@ -1,13 +1,18 @@
 <?php
 
-	abstract class MultiBook_Helper {
+	abstract class MultiBook_Helper extends rcube_addressbook {
 
-		protected $filter = array();
+		public $name, $id, $result, $group_id, $groups = false;
+		public $primary_key = 'ID';
+		public $readonly = true;
+
+		private $filter;
+
+		protected $cloak= array();
 		protected $show = array();
 		protected $hide = array();
 		protected $db;
 
-		public $name, $id, $groups = FALSE;
 
 		public function __construct(&$config, $name) {
 			$this->db   = rcube::get_instance()->db;
@@ -16,6 +21,11 @@
 			$this->ready= true;
 
 			$config['MultiBook'][$this->id] = $this;
+		}
+
+		public function reset() {
+			$this->result = null;
+			$this->filter = null;
 		}
 
 		protected function addSQL($query, $Found=array()) {
@@ -54,11 +64,11 @@
 			}
 		}
 
-		public function addFilter($entry) {
+		public function addCloak($entry) {
 			if (is_array($entry)) {
-				$this->filter += $entry;
+				$this->cloak += $entry;
 			} else {
-				$this->filter[]= $entry;
+				$this->cloak[]= $entry;
 			}
 		}
 
@@ -74,76 +84,117 @@
 			return TRUE;
 		}
 
-		public function get_record($id, $assoc, $child) {
+		// Boilerplate //
+		public function get_group($group_id) { return $this->groups ? array('ID' => $group_id, 'name' => $group_id) : null; }
+		public function count() { return new rcube_result_set(1, ($this->list_page-1) * $this->page_size); }
+		public function remove_from_group($group_id, $ids) { return false; }
+		public function set_search_set($filter) { $this->filter = $filter; }
+		public function rename_group($gid, $newname) { return $newname; }
+		public function add_to_group($group_id, $ids) { return false; }
+		public function get_search_set() { return $this->filter; }
+		public function get_result() { return $this->result; }
+		public function create_group($name) { return false; }
+		public function delete_group($gid) { return false; }
+		public function get_name() { return $this->name; }
+		public function set_group($gid) {
+	        $this->group_id = $gid;
+	        $this->cache = null;
+	    }
+		// E/Boilerpl8 //
+
+		public function get_record($id, $assoc=false) {
 
 			$this->db->query('SELECT * FROM MultiBook WHERE `ID`=?', $id);
 			if ($record = $this->db->fetch_assoc()) {
 				$record['email'] = explode(',', $record['email']);
-				$child->result = new rcube_result_set(1);
-				$child->result->add($record);
+				$this->result = new rcube_result_set(1);
+				$this->result->add($record);
 			}
 
-			return $assoc && $record ? $record : $child->result;
+			return $assoc && $record ? $record : $this->result;
 
 		}
 
-		public function list_groups($search, $mode) { return array(); }
-		abstract function list_records($cols, $subset, $child);
-
-	}
-
+		public function search($fields, $value, $strict=false, $select=true, $nocount=false, $required=array()) {
+			if (!is_array($fields)) { $fields = array($fields); }
+	        if (!is_array($required) && !empty($required)) { $required = array($required); }
 
 
-	class MultiBook_Global extends MultiBook_Helper {
+	        $db = rcube::get_instance()->db;
+	        $where = array();
+	        $mode = intval($mode);
+	        $WS = ' ';
 
-		public function list_records($cols, $subset, $child) {
-			$child->result = $child->count();
+	        foreach ($fields as $idx => $col) {
 
-			if (empty($child->group_id)) {
-				$this->db->query('SELECT * FROM MultiBook');
-			} else {
-				$x = $child->filter ? (' (' . $child->filter . ') AND '):' ';
-				$this->db->query("SELECT * FROM MultiBook WHERE {$x} domain=?", $child->group_id);
-			}
+	        	if ($col == 'ID' || $col == $this->primary_key) {
+	    			$ids     = !is_array($value) ? explode(',', $value) : $value;
+	                $ids     = $db->array2list($ids, 'integer');
+	                $where[] = 'c.' . $this->primary_key.' IN ('.$ids.')';
+	                continue;
+	            } else if ($col == '*') {
+	        			$words = array();
+	        			foreach (explode($WS, rcube_utils::normalize_string($value)) as $word) {
+	        				switch ($mode) {
+	        					case 1: // Strict
+	        						$words[]='(' . $db->ilike('name', $word . '%')
+			                            . ' OR ' . $db->ilike('email',$word . '%')
+			                            . ' OR ' . $db->ilike('name', '%' . $WS . $word . $WS . '%')
+			                            . ' OR ' . $db->ilike('email','%' . $WS . $word . $WS . '%')
+			                            . ' OR ' . $db->ilike('name', '%' . $WS . $word)
+			                            . ' OR ' . $db->ilike('email','%' . $WS . $word). ')';
+	        						break;
 
-			while ($ret = $this->db->fetch_assoc()) {
-				$ret['email'] = explode(',', $ret['email']);
-				//$names = explode(' ', $ret['name']);
-				//$ret['surname'] = array_push($names);
-				//$ret['firsname']= implode(' ', $names);
-				$child->result->add($ret);
-			}
-			return $child->result;
+	        					case 2: // Prefix
+	        						$words[]='(' . $db->ilike('name', $word . '%')
+	                            		. ' OR ' . $db->ilike('email',$word . '%')
+	                            		. ' OR ' . $db->ilike('name', '%' . $WS . $word . '%')
+	                            		. ' OR ' . $db->ilike('email','%' . $WS . $word . '%') . ')';
+									break;
 
+	        					default: // Partial
+	        						$words[]='(' . $db->ilike('name', '%' . $word . '%')
+	        						    . ' OR ' . $db->ilike('email','%' . $word . '%') . ')';
+	        						break;
+	        				}
+	        			}
+	        			$where[] = '(' . join(' AND ', $words) . ')';
+	        	//} else {
+	        	} elseif ($col !== 'firstname' && $col !== 'surname') {
+	        		$val = is_array($value) ? $value[$idx] : $value;
+
+	        		switch ($mode) {
+	                    case 1: // strict
+	                        $where[] = '(' . $db->quote_identifier($col) . ' = ' . $db->quote($val)
+	                            . ' OR ' . $db->ilike($col, $val . $AS . '%')
+	                            . ' OR ' . $db->ilike($col, '%' . $AS . $val . $AS . '%')
+	                            . ' OR ' . $db->ilike($col, '%' . $AS . $val) . ')';
+	                        break;
+	                    case 2: // prefix
+	                        $where[] = '(' . $db->ilike($col, $val . '%')
+	                            . ' OR ' . $db->ilike($col, $AS . $val . '%') . ')';
+	                        break;
+	                    default: // partial
+	                        $where[] = $db->ilike($col, '%' . $val . '%');
+	                }
+	        	}
+
+		        if (!empty($where)) {
+		            $this->set_search_set(join(is_array($value) ? ' AND ' : ' OR ', $where));
+		            /*if ($select) {
+		                $this->list_records(null, 0, $nocount);
+		            } else { $this->result = $this->count(); */
+		        }
+
+	        }
+
+			return $this->list_records();
 		}
 
-		function list_groups($search, $mode) {
-			if (!$this->groups) { return array(); }
-			if ($search) {
-				switch (intval($mode)) {
-		            case 1:
-		                $x = $rc->db->ilike('domain', $search);
-		                break;
-		            case 2:
-		                $x = $rc->db->ilike('domain', $search . '%');
-		                break;
-		            default:
-		                $x = $rc->db->ilike('domain', '%' . $search . '%');
-	            }
-	            $x = ' WHERE ' . $x . ' ';
-			} else { $x = ' '; }
-
-			$this->db->query("SELECT domain FROM MultiBook {$x} GROUP BY domain");
-			while ($ret = $rc->db->fetch_assoc()) {
-				$cf[] = array( 'ID' => $ret['domain'], 'name' => $ret['domain'] );
-			}
-			return $cf;
-		}
+		public function list_groups($search = null, $mode=0) { return array(); }
+		//abstract function list_records($cols=null, $subset=0);
 
 	}
 
-	class MultiBook_Domain extends MultiBook_Helper {
-
-		public function list_records($cols, $subset, $child) {}
-
-	}
+	require 'MultiBook.Global.class.php';
+	require 'MultiBook.Domain.class.php';
