@@ -1,6 +1,6 @@
 <?php
 
-	abstract class ABX {
+	abstract class MultiBook_Helper {
 
 		protected $filter = array();
 		protected $show = array();
@@ -15,7 +15,7 @@
 			$this->name = $name;
 			$this->ready= true;
 
-			$config['ABX'][$this->id] = $this;
+			$config['MultiBook'][$this->id] = $this;
 		}
 
 		protected function addSQL($query, $Found=array()) {
@@ -74,20 +74,36 @@
 			return TRUE;
 		}
 
+		public function get_record($id, $assoc, $child) {
+
+			$this->db->query('SELECT * FROM MultiBook WHERE `ID`=?', $id);
+			if ($record = $this->db->fetch_assoc()) {
+				$record['email'] = explode(',', $record['email']);
+				$child->result = new rcube_result_set(1);
+				$child->result->add($record);
+			}
+
+			return $assoc && $record ? $record : $child->result;
+
+		}
+
+		public function list_groups($search, $mode) { return array(); }
+		abstract function list_records($cols, $subset, $child);
+
 	}
 
 
 
-	class ABX_Global extends ABX {
+	class MultiBook_Global extends MultiBook_Helper {
 
 		public function list_records($cols, $subset, $child) {
-			$this->result = $child->count();
+			$child->result = $child->count();
 
 			if (empty($child->group_id)) {
-				$this->db->query('SELECT * FROM global_addressbook');
+				$this->db->query('SELECT * FROM MultiBook');
 			} else {
 				$x = $child->filter ? (' (' . $child->filter . ') AND '):' ';
-				$this->db->query("SELECT * FROM global_addressbook WHERE {$x} domain=?", $child->group_id);
+				$this->db->query("SELECT * FROM MultiBook WHERE {$x} domain=?", $child->group_id);
 			}
 
 			while ($ret = $this->db->fetch_assoc()) {
@@ -95,16 +111,39 @@
 				//$names = explode(' ', $ret['name']);
 				//$ret['surname'] = array_push($names);
 				//$ret['firsname']= implode(' ', $names);
-				$this->result->add($ret);
+				$child->result->add($ret);
 			}
-			return $this->result;
+			return $child->result;
 
+		}
+
+		function list_groups($search, $mode) {
+			if (!$this->groups) { return array(); }
+			if ($search) {
+				switch (intval($mode)) {
+		            case 1:
+		                $x = $rc->db->ilike('domain', $search);
+		                break;
+		            case 2:
+		                $x = $rc->db->ilike('domain', $search . '%');
+		                break;
+		            default:
+		                $x = $rc->db->ilike('domain', '%' . $search . '%');
+	            }
+	            $x = ' WHERE ' . $x . ' ';
+			} else { $x = ' '; }
+
+			$this->db->query("SELECT domain FROM MultiBook {$x} GROUP BY domain");
+			while ($ret = $rc->db->fetch_assoc()) {
+				$cf[] = array( 'ID' => $ret['domain'], 'name' => $ret['domain'] );
+			}
+			return $cf;
 		}
 
 	}
 
-	class ABX_Domain extends ABX {
+	class MultiBook_Domain extends MultiBook_Helper {
 
-		public function list_records($cols=null, $subset=0) {}
+		public function list_records($cols, $subset, $child) {}
 
 	}

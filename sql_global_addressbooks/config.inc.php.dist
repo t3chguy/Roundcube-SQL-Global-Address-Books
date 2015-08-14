@@ -1,7 +1,7 @@
 <?php
 
-	require 'ABX.class.php';
+	require 'MultiBook.class.php';
 
-	$someBook = new ABX_Global($config, '!Global Address Book!');
+	$someBook = new MultiBook_Global($config, '!Global Address Book!');
 
-	$otherBook= new ABX_Domain($config, '!Domain Address Book!');
+	$otherBook= new MultiBook_Domain($config, '!Domain Address Book!');

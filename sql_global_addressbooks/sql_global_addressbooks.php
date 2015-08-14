@@ -1,6 +1,6 @@
 <?php
-//ini_set('display_errors', 1);
-require_once(__DIR__ . '/ABB.class.php');
+ini_set('display_errors', 1);
+require_once(__DIR__ . '/MultiBook_Backend.class.php');
 /**
  * Specialised Global Addressbook Contacts Class!
  *
@@ -13,7 +13,7 @@ require_once(__DIR__ . '/ABB.class.php');
  * @license http://bit.ly/16ABH2R
  * @license MIT
  *
- * @version 2.5.0
+ * @version 3.0.0
  */
 class sql_global_addressbooks extends rcube_plugin {
 
@@ -29,7 +29,7 @@ class sql_global_addressbooks extends rcube_plugin {
 		$domain = $rcmail->user->get_username('domain');
 	    $sources= (array)$config->get('autocomplete_addressbooks', array());
 
-	    foreach ($config->get('ABX', array()) as $hash => $book) {
+	    foreach ($config->get('MultiBook', array()) as $hash => $book) {
 	    	$sources[] = $hash;
 	    }
 	    $config->set('autocomplete_addressbooks', $sources);
@@ -65,7 +65,7 @@ class sql_global_addressbooks extends rcube_plugin {
 	public function address_sources($p) {
 		$rc     = rcmail::get_instance();
 
-		foreach ($rc->config->get('ABX', array()) as $hash => $book) {
+		foreach ($rc->config->get('MultiBook', array()) as $hash => $book) {
 	    	if ($book->valid($rc->user->get_username())) {
 		    	$p['sources'][$book->id] = $this->touchbook(
             		$hash, $book->name, $book->groups
@@ -78,19 +78,12 @@ class sql_global_addressbooks extends rcube_plugin {
 
 	public function get_address_book($p) {
 
-		$ABX = rcmail::get_instance()->config->get('ABX', FALSE);
-		if ($ABX && isset($ABX[$p['id']])) {
-			$p['instance'] = new ABB($ABX[$p['id']]);
+		$MultiBook = rcmail::get_instance()->config->get('MultiBook', FALSE);
+		if ($MultiBook && isset($MultiBook[$p['id']])) {
+			$p['instance'] = new MultiBook_Backend($MultiBook[$p['id']]);
 		}
-
-		/*if ($p['id'] === 'global') {
-			$p['instance'] = new sql_global_backend('global');
-			$p['instance']->groups = rcmail::get_instance()->config->get('_sql_globalbook_gp', true);
-		} elseif (in_array($p['id'], self::ac(rcmail::get_instance()->config->get('_sql_supportbook', array()), 0))) {
-			$p['instance'] = new sql_global_backend($p['id']);
-		} elseif ($p['id'] === 'domain') { $p['instance'] = new sql_global_backend('domain'); }*/
-
 		return $p;
+
 	}
 
 }
