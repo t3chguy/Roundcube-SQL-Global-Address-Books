@@ -6,11 +6,11 @@
 		public $primary_key = 'ID';
 		public $readonly = true;
 
-		private $filter;
 
 		protected $cloak= array();
 		protected $show = array();
 		protected $hide = array();
+		protected $filter;
 		protected $db;
 
 
@@ -120,7 +120,6 @@
 	        if (!is_array($required) && !empty($required)) { $required = array($required); }
 
 
-	        $db = rcube::get_instance()->db;
 	        $where = array();
 	        $mode = intval($mode);
 	        $WS = ' ';
@@ -129,7 +128,7 @@
 
 	        	if ($col == 'ID' || $col == $this->primary_key) {
 	    			$ids     = !is_array($value) ? explode(',', $value) : $value;
-	                $ids     = $db->array2list($ids, 'integer');
+	                $ids     = $this->db->array2list($ids, 'integer');
 	                $where[] = 'c.' . $this->primary_key.' IN ('.$ids.')';
 	                continue;
 	            } else if ($col == '*') {
@@ -137,24 +136,24 @@
 	        			foreach (explode($WS, rcube_utils::normalize_string($value)) as $word) {
 	        				switch ($mode) {
 	        					case 1: // Strict
-	        						$words[]='(' . $db->ilike('name', $word . '%')
-			                            . ' OR ' . $db->ilike('email',$word . '%')
-			                            . ' OR ' . $db->ilike('name', '%' . $WS . $word . $WS . '%')
-			                            . ' OR ' . $db->ilike('email','%' . $WS . $word . $WS . '%')
-			                            . ' OR ' . $db->ilike('name', '%' . $WS . $word)
-			                            . ' OR ' . $db->ilike('email','%' . $WS . $word). ')';
+	        						$words[]='(' . $this->db->ilike('name', $word . '%')
+			                            . ' OR ' . $this->db->ilike('email',$word . '%')
+			                            . ' OR ' . $this->db->ilike('name', '%' . $WS . $word . $WS . '%')
+			                            . ' OR ' . $this->db->ilike('email','%' . $WS . $word . $WS . '%')
+			                            . ' OR ' . $this->db->ilike('name', '%' . $WS . $word)
+			                            . ' OR ' . $this->db->ilike('email','%' . $WS . $word). ')';
 	        						break;
 
 	        					case 2: // Prefix
-	        						$words[]='(' . $db->ilike('name', $word . '%')
-	                            		. ' OR ' . $db->ilike('email',$word . '%')
-	                            		. ' OR ' . $db->ilike('name', '%' . $WS . $word . '%')
-	                            		. ' OR ' . $db->ilike('email','%' . $WS . $word . '%') . ')';
+	        						$words[]='(' . $this->db->ilike('name', $word . '%')
+	                            		. ' OR ' . $this->db->ilike('email',$word . '%')
+	                            		. ' OR ' . $this->db->ilike('name', '%' . $WS . $word . '%')
+	                            		. ' OR ' . $this->db->ilike('email','%' . $WS . $word . '%') . ')';
 									break;
 
 	        					default: // Partial
-	        						$words[]='(' . $db->ilike('name', '%' . $word . '%')
-	        						    . ' OR ' . $db->ilike('email','%' . $word . '%') . ')';
+	        						$words[]='(' . $this->db->ilike('name', '%' . $word . '%')
+	        						    . ' OR ' . $this->db->ilike('email','%' . $word . '%') . ')';
 	        						break;
 	        				}
 	        			}
@@ -165,17 +164,17 @@
 
 	        		switch ($mode) {
 	                    case 1: // strict
-	                        $where[] = '(' . $db->quote_identifier($col) . ' = ' . $db->quote($val)
-	                            . ' OR ' . $db->ilike($col, $val . $AS . '%')
-	                            . ' OR ' . $db->ilike($col, '%' . $AS . $val . $AS . '%')
-	                            . ' OR ' . $db->ilike($col, '%' . $AS . $val) . ')';
+	                        $where[] = '(' . $this->db->quote_identifier($col) . ' = ' . $this->db->quote($val)
+	                            . ' OR ' . $this->db->ilike($col, $val . $AS . '%')
+	                            . ' OR ' . $this->db->ilike($col, '%' . $AS . $val . $AS . '%')
+	                            . ' OR ' . $this->db->ilike($col, '%' . $AS . $val) . ')';
 	                        break;
 	                    case 2: // prefix
-	                        $where[] = '(' . $db->ilike($col, $val . '%')
-	                            . ' OR ' . $db->ilike($col, $AS . $val . '%') . ')';
+	                        $where[] = '(' . $this->db->ilike($col, $val . '%')
+	                            . ' OR ' . $this->db->ilike($col, $AS . $val . '%') . ')';
 	                        break;
 	                    default: // partial
-	                        $where[] = $db->ilike($col, '%' . $val . '%');
+	                        $where[] = $this->db->ilike($col, '%' . $val . '%');
 	                }
 	        	}
 
