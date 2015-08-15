@@ -49,19 +49,19 @@
 		}
 
 		public function addShow($entry) {
-			foreach (is_array($entry) ? $entry:array($entry) as $single) {
+			foreach ((array)$entry as $single) {
 				$this->show[] = str_replace('%d', $this->user->get_username('domain'), $single);
 			}
 		}
 
 		public function addHide($entry) {
-			foreach (is_array($entry) ? $entry:array($entry) as $single) {
+			foreach ((array)$entry as $single) {
 				$this->hide[] = str_replace('%d', $this->user->get_username('domain'), $single);
 			}
 		}
 
 		public function addCloak($entry) {
-			foreach (is_array($entry) ? $entry:array($entry) as $single) {
+			foreach ((array)$entry as $single) {
 				$this->cloak[] = str_replace('%d', $this->user->get_username('domain'), $single);
 			}
 		}
