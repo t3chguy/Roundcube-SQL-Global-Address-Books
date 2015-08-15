@@ -6,12 +6,10 @@
 		public $primary_key = 'ID';
 		public $readonly = true;
 
-
 		protected $cloak= array();
 		protected $show = array();
 		protected $hide = array();
 		protected $user, $filter, $db;
-
 
 		public function __construct(&$config, $name) {
 			$this->user = rcmail::get_instance()->user;
@@ -62,7 +60,7 @@
 
 		public function addCloak($entry) {
 			foreach ((array)$entry as $single) {
-				$this->cloak[] = str_replace('%d', $this->user->get_username('domain'), $single);
+				$this->cloak[]= str_replace('%d', $this->user->get_username('domain'), $single);
 			}
 		}
 
