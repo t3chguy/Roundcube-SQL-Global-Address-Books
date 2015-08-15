@@ -108,13 +108,14 @@
 
 		}
 
-		public function search($fields, $value, $strict=false, $select=true, $nocount=false, $required=array()) {
+		public function search($fields, $value, $strict=false, $select=true, $nocount=false, $required=array(), $where=array()) {
 			if (!is_array($fields)) { $fields = array($fields); }
 	        if (!is_array($required) && !empty($required)) { $required = array($required); }
 
-	        $where = array();
+	        ;
 	        $mode = intval($mode);
-	        $WS = ' ';
+        	$AS   = self::SEPARATOR;
+			$WS   = ' ';
 
 	        foreach ($fields as $idx => $col) {
 
