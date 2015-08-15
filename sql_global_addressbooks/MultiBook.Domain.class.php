@@ -7,7 +7,7 @@
 
 			$x = $this->filter ? (' (' . $this->filter . ') AND '):' ';
 			$this->db->query("SELECT * FROM MultiBook WHERE {$x} domain=?",
-			                 rcmail::get_instance()->user->get_username('domain'));
+			                 $this->user->get_username('domain'));
 
 			while ($ret = $this->db->fetch_assoc()) {
 				$ret['email'] = explode(',', $ret['email']);

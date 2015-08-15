@@ -10,11 +10,11 @@
 		protected $cloak= array();
 		protected $show = array();
 		protected $hide = array();
-		protected $filter;
-		protected $db;
+		protected $user, $filter, $db;
 
 
 		public function __construct(&$config, $name) {
+			$this->user = rcmail::get_instance()->user;
 			$this->db   = rcube::get_instance()->db;
 			$this->id   = md5($name);
 			$this->name = $name;
@@ -49,26 +49,20 @@
 		}
 
 		public function addShow($entry) {
-			if (is_array($entry)) {
-				$this->show += $entry;
-			} else {
-				$this->show[]= $entry;
+			foreach (is_array($entry) ? $entry:array($entry) as $single) {
+				$this->show[] = str_replace('%d', $this->user->get_username('domain'), $single);
 			}
 		}
 
 		public function addHide($entry) {
-			if (is_array($entry)) {
-				$this->hide += $entry;
-			} else {
-				$this->hide[]= $entry;
+			foreach (is_array($entry) ? $entry:array($entry) as $single) {
+				$this->hide[] = str_replace('%d', $this->user->get_username('domain'), $single);
 			}
 		}
 
 		public function addCloak($entry) {
-			if (is_array($entry)) {
-				$this->cloak += $entry;
-			} else {
-				$this->cloak[]= $entry;
+			foreach (is_array($entry) ? $entry:array($entry) as $single) {
+				$this->cloak[] = str_replace('%d', $this->user->get_username('domain'), $single);
 			}
 		}
 
