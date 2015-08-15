@@ -64,6 +64,21 @@
 			}
 		}
 
+		protected function checkCloak($ret) {
+			$ret['email'] = explode(',', $ret['email']);
+
+			foreach ($ret['email'] as $email) {
+				$spl = explode('@', $email, 2);
+				$arr = array( $email, $spl[0] . '@', $spl[1] );
+				if (!!array_intersect( $arr, $this->cloak )) return false;
+			}
+
+			$names = explode(' ', $ret['name']);
+			$ret['surname'] = array_pop($names);
+			$ret['firsname']= implode(' ', $names);
+			return $ret;
+		}
+
 		public function valid($email) {
 			$spl = explode('@', $email, 2);
 			$arr = array( $email, $spl[0] . '@', $spl[1] );
