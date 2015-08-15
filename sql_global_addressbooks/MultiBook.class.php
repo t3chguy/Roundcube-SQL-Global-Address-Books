@@ -73,7 +73,8 @@
 		}
 
 		public function valid($email) {
-			$arr = array( $email, end(explode('@', $email, 2)) );
+			$spl = explode('@', $email, 2);
+			$arr = array( $email, $spl[0] . '@', $spl[1] );
 
 			if ( (count($this->show) &&
 			     !array_intersect( $arr, $this->show ) ) ||
