@@ -1,7 +1,30 @@
 <?php
 
-	require 'MultiBook.class.php';
+    require_once 'MultiBook.class.php';
 
-	$someBook = new MultiBook_Global($config, '!Global Address Book!');
+    // =========================================================================
+    // Create a global address book
+    $GlobalBook = new MultiBook_Global($config, '!Global Address Book!');
 
-	$otherBook= new MultiBook_Domain($config, '!Domain Address Book!');
+    // ...and make it accessible to our support-staff member "mike" in all domains
+    $GlobalBook->addShow('mike@');
+
+    // same way, you can make this accessible to other users specifying their full name.
+    // or you can use SQL to make it available to certain domains only:
+    // $GlobalBook->addShowSQL("SELECT name FROM MultiBook WHERE domain IN ('example.org','example.net')");
+
+    // if you've got many domains (or adding new ones from time to time), but want
+    // to hide the book just from few, the other way around might be more useful:
+    // $GlobalBook->addHideSQL("SELECT name FROM MultiBook WHERE domain IN ('example.com','example.gov')");
+
+    // have some very private user that shouldn't show up? Cloak him/her:
+    // $GlobalBook->addCloak('nsa@');
+
+
+    // =========================================================================
+    // Now let's have a domain addressbook as well. This contains all members of the
+    // "logged-in domain" and is shown to all its members automatically, so no
+    // further adjustments required
+    $DomainBook= new MultiBook_Domain($config, '!Domain Address Book!');
+
+    // you can apply the same Show/Cloak rules here as described for the GlobalBook.

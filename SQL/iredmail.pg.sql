@@ -32,8 +32,8 @@
 --
 -- CREATE EXTENSION dblink;
 
-CREATE VIEW global_addressbook AS
+CREATE VIEW MultiBook AS
     SELECT * FROM dblink('host=127.0.0.1 port=5432 user=vmail password=xxx dbname=vmail', 'SELECT extract(epoch FROM created), name, username, domain FROM mailbox WHERE active=1')
-    AS global_addressbook ("ID" BIGINT, name VARCHAR(255), email VARCHAR(255), domain VARCHAR(255));
+    AS MultiBook ("ID" BIGINT, name VARCHAR(255), email VARCHAR(255), domain VARCHAR(255));
 
-ALTER TABLE global_addressbook OWNER TO roundcube;
+ALTER TABLE MultiBook OWNER TO roundcube;
