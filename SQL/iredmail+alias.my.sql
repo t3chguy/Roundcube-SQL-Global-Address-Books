@@ -2,7 +2,7 @@ CREATE
     ALGORITHM = UNDEFINED
     DEFINER = `root`@`localhost`
     SQL SECURITY DEFINER
-VIEW `global_addressbook` AS
+VIEW `MultiBook` AS
     SELECT
         SUBSTR((UNIX_TIMESTAMP(`vmail`.`mailbox`.`created`) -
         CHAR_LENGTH(`vmail`.`mailbox`.`password`)), -(8)) AS `ID`,
