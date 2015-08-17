@@ -129,7 +129,7 @@
 
 	        ;
 	        $mode = intval($mode);
-        	$AS   = self::SEPARATOR;
+            $AS   = ',';
 			$WS   = ' ';
 
 	        foreach ($fields as $idx => $col) {
