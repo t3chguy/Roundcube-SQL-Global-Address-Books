@@ -15,4 +15,5 @@ VIEW `MultiBook` AS
                     AND (`vmail`.`alias`.`address` LIKE '%@%'))) AS `email`,
         `vmail`.`mailbox`.`domain` AS `domain`
     FROM
-        `vmail`.`mailbox`;
+        `vmail`.`mailbox`
+    ORDER BY name;

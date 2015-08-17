@@ -10,4 +10,5 @@ VIEW `MultiBook` AS
         `vmail`.`mailbox`.`username` AS `email`,
         `vmail`.`mailbox`.`domain` AS `domain`
     FROM
-        `vmail`.`mailbox`;
+        `vmail`.`mailbox`
+    ORDER BY name;
