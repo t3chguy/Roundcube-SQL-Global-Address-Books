@@ -20,7 +20,7 @@ class sql_global_backend extends rcube_addressbook {
 
 	public function __construct($name) {
 		$this->ready = true;
-		$this->name  = $name;
+		$this->name = $name;
 		$dbtype = rcmail::get_instance()->config->get('_database_type', '');
 		if (empty($dbtype)) {
 			// use roundcube native database
@@ -67,31 +67,33 @@ class sql_global_backend extends rcube_addressbook {
 		if (empty($this->group_id)) {
 
 			switch ($this->name) {
-				case 'global':
-					$cf = rcmail::get_instance()->config->get('_sql_gb_data_allowed', array('*'));
-					$fc = rcmail::get_instance()->config->get('_sql_gb_data_hidden', array());
-					if ($cf === array('*')) {
-						$cf = array();
-					} else { $x[] = 'domain IN (' . $db->array2list($cf) . ')'; }
-					if ($this->filter)  { $x[] = '(' . $this->filter .')'; }
-					if (count($fc) > 0) { $x[] = 'domain NOT IN (' . $db->array2list($fc) . ')'; }
-					$x = count($x) > 0 ? (' WHERE ' . implode(' AND ', $x)):'';
-					$db->query('SELECT * FROM global_addressbook' . $x);
-					break;
+			case 'global':
+				$cf = rcmail::get_instance()->config->get('_sql_gb_data_allowed', array('*'));
+				$fc = rcmail::get_instance()->config->get('_sql_gb_data_hidden', array());
+				if ($cf === array('*')) {
+					$cf = array();
+				} else {
+					$x[] = 'domain IN (' . $db->array2list($cf) . ')';
+				}
+				if ($this->filter) { $x[] = '(' . $this->filter .')'; }
+				if (count($fc) > 0) { $x[] = 'domain NOT IN (' . $db->array2list($fc) . ')'; }
+				$x = count($x) > 0 ? (' WHERE ' . implode(' AND ', $x)):'';
+				$db->query('SELECT * FROM global_addressbook' . $x);
+				break;
 
-				case 'domain':
-					$x = $this->filter ? (' (' . $this->filter . ') AND '):' ';
-					$db->query('SELECT * FROM global_addressbook WHERE' . $x . 'domain=?', rcmail::get_instance()->user->get_username('domain'));
-					break;
+			case 'domain':
+				$x = $this->filter ? (' (' . $this->filter . ') AND '):' ';
+				$db->query('SELECT * FROM global_addressbook WHERE' . $x . 'domain=?', rcmail::get_instance()->user->get_username('domain'));
+				break;
 
-				default:
-					$d = rcmail::get_instance()->config->get('_sql_supportbook', array());
-					$f = array_flip(sql_global_addressbooks::ac($d, 0));
-					array_shift($z = $d[$f[$this->name]]);
-					if ($this->filter) { $x[] = '(' . $this->filter .')'; }
-					if (count($z) > 0) { $x[] = 'domain IN (' . $db->array2list($z) . ')'; }
-					$x = count($x)> 0 ? (' WHERE ' . implode(' AND ', $x)):'';
-					$db->query('SELECT * FROM global_addressbook' . $x);
+			default:
+				$d = rcmail::get_instance()->config->get('_sql_supportbook', array());
+				$f = array_flip(sql_global_addressbooks::ac($d, 0));
+				array_shift($z = $d[$f[$this->name]]);
+				if ($this->filter) { $x[] = '(' . $this->filter .')'; }
+				if (count($z) > 0) { $x[] = 'domain IN (' . $db->array2list($z) . ')'; }
+				$x = count($x)> 0 ? (' WHERE ' . implode(' AND ', $x)):'';
+				$db->query('SELECT * FROM global_addressbook' . $x);
 			}
 
 		} else {
@@ -101,9 +103,6 @@ class sql_global_backend extends rcube_addressbook {
 
 		while ($ret = $db->fetch_assoc()) {
 			$ret['email'] = explode(',', $ret['email']);
-			//$names = explode(' ', $ret['name']);
-			//$ret['surname'] = array_push($names);
-			//$ret['firsname']= implode(' ', $names);
 			$this->result->add($ret);
 		}
 		return $this->result;
@@ -118,16 +117,16 @@ class sql_global_backend extends rcube_addressbook {
 
 		if ($search) {
 			switch (intval($mode)) {
-	            case 1:
-	                $x = $db->ilike('domain', $search);
-	                break;
-	            case 2:
-	                $x = $db->ilike('domain', $search . '%');
-	                break;
-	            default:
-	                $x = $db->ilike('domain', '%' . $search . '%');
-            }
-            $x = ' WHERE ' . $x . ' ';
+			case 1:
+				$x = $db->ilike('domain', $search);
+				break;
+			case 2:
+				$x = $db->ilike('domain', $search . '%');
+				break;
+			default:
+				$x = $db->ilike('domain', '%' . $search . '%');
+			}
+			$x = ' WHERE ' . $x . ' ';
 		} else { $x = ' '; }
 
 		if ($cf === array('*')) {
@@ -138,94 +137,85 @@ class sql_global_backend extends rcube_addressbook {
 
 		$co = array();
 		foreach (array_diff($cf, $fc) as $v) { $co[] = array('ID' => $v, 'name' => $v); }
-        //file_put_contents('/var/www/test.log', print_r([$co, $search, $mode, $this->groups, $this->name, $this->group_id], true));
 		return $co;
 
 	}
 
 	public function search($fields, $value, $strict=false, $select=true, $nocount=false, $required=array()) {
 		if (!is_array($fields)) { $fields = array($fields); }
-        if (!is_array($required) && !empty($required)) { $required = array($required); }
+		if (!is_array($required) && !empty($required)) { $required = array($required); }
 
+		$db = $this->db;
+		$where = array();
+		$mode = intval($mode);
+		$WS = ' ';
 
-        $db = $this->db;
-        $where = array();
-        $mode = intval($mode);
-        $WS = ' ';
+		foreach ($fields as $idx => $col) {
 
-        foreach ($fields as $idx => $col) {
+			if ($col == 'ID' || $col == $this->primary_key) {
+				$ids = !is_array($value) ? explode(',', $value) : $value;
+				$ids = $db->array2list($ids, 'integer');
+				$where[] = 'c.' . $this->primary_key.' IN ('.$ids.')';
+				continue;
+			} else if ($col == '*') {
+				$words = array();
+				foreach (explode($WS, rcube_utils::normalize_string($value)) as $word) {
+					switch ($mode) {
+					case 1: // strict
+						$words[]='(' . $db->ilike('name', $word . '%')
+							. ' OR ' . $db->ilike('email',$word . '%')
+							. ' OR ' . $db->ilike('name', '%' . $WS . $word . $WS . '%')
+							. ' OR ' . $db->ilike('email','%' . $WS . $word . $WS . '%')
+							. ' OR ' . $db->ilike('name', '%' . $WS . $word)
+							. ' OR ' . $db->ilike('email','%' . $WS . $word). ')';
+						break;
 
-        	if ($col == 'ID' || $col == $this->primary_key) {
-    			$ids     = !is_array($value) ? explode(',', $value) : $value;
-                $ids     = $db->array2list($ids, 'integer');
-                $where[] = 'c.' . $this->primary_key.' IN ('.$ids.')';
-                continue;
-            } else if ($col == '*') {
-        			$words = array();
-        			foreach (explode($WS, rcube_utils::normalize_string($value)) as $word) {
-        				switch ($mode) {
-        					case 1: // Strict
-        						$words[]='(' . $db->ilike('name', $word . '%')
-		                            . ' OR ' . $db->ilike('email',$word . '%')
-		                            . ' OR ' . $db->ilike('name', '%' . $WS . $word . $WS . '%')
-		                            . ' OR ' . $db->ilike('email','%' . $WS . $word . $WS . '%')
-		                            . ' OR ' . $db->ilike('name', '%' . $WS . $word)
-		                            . ' OR ' . $db->ilike('email','%' . $WS . $word). ')';
-        						break;
+					case 2: // prefix
+						$words[]='(' . $db->ilike('name', $word . '%')
+							. ' OR ' . $db->ilike('email',$word . '%')
+							. ' OR ' . $db->ilike('name', '%' . $WS . $word . '%')
+							. ' OR ' . $db->ilike('email','%' . $WS . $word . '%') . ')';
+						break;
 
-        					case 2: // Prefix
-        						$words[]='(' . $db->ilike('name', $word . '%')
-                            		. ' OR ' . $db->ilike('email',$word . '%')
-                            		. ' OR ' . $db->ilike('name', '%' . $WS . $word . '%')
-                            		. ' OR ' . $db->ilike('email','%' . $WS . $word . '%') . ')';
-								break;
+					default: // partial
+						$words[]='(' . $db->ilike('name', '%' . $word . '%')
+							. ' OR ' . $db->ilike('email','%' . $word . '%') . ')';
+						break;
+					}
+				}
+				$where[] = '(' . join(' AND ', $words) . ')';
+			} elseif ($col !== 'firstname' && $col !== 'surname') {
+				$val = is_array($value) ? $value[$idx] : $value;
 
-        					default: // Partial
-        						$words[]='(' . $db->ilike('name', '%' . $word . '%')
-        						    . ' OR ' . $db->ilike('email','%' . $word . '%') . ')';
-        						break;
-        				}
-        			}
-        			$where[] = '(' . join(' AND ', $words) . ')';
-        	//} else {
-        	} elseif ($col !== 'firstname' && $col !== 'surname') {
-        		$val = is_array($value) ? $value[$idx] : $value;
+				switch ($mode) {
+				case 1: // strict
+					$where[] = '(' . $db->quote_identifier($col) . ' = ' . $db->quote($val)
+						. ' OR ' . $db->ilike($col, $val . $AS . '%')
+						. ' OR ' . $db->ilike($col, '%' . $AS . $val . $AS . '%')
+						. ' OR ' . $db->ilike($col, '%' . $AS . $val) . ')';
+					break;
+				case 2: // prefix
+					$where[] = '(' . $db->ilike($col, $val . '%')
+						. ' OR ' . $db->ilike($col, $AS . $val . '%') . ')';
+					break;
+				default: // partial
+					$where[] = $db->ilike($col, '%' . $val . '%');
+				}
+			}
 
-        		switch ($mode) {
-                    case 1: // strict
-                        $where[] = '(' . $db->quote_identifier($col) . ' = ' . $db->quote($val)
-                            . ' OR ' . $db->ilike($col, $val . $AS . '%')
-                            . ' OR ' . $db->ilike($col, '%' . $AS . $val . $AS . '%')
-                            . ' OR ' . $db->ilike($col, '%' . $AS . $val) . ')';
-                        break;
-                    case 2: // prefix
-                        $where[] = '(' . $db->ilike($col, $val . '%')
-                            . ' OR ' . $db->ilike($col, $AS . $val . '%') . ')';
-                        break;
-                    default: // partial
-                        $where[] = $db->ilike($col, '%' . $val . '%');
-                }
-        	}
+			if (!empty($where)) {
+				$this->set_search_set(join(is_array($value) ? ' AND ' : ' OR ', $where));
+			}
 
-	        if (!empty($where)) {
-	            $this->set_search_set(join(is_array($value) ? ' AND ' : ' OR ', $where));
-	            /*if ($select) {
-	                $this->list_records(null, 0, $nocount);
-	            } else { $this->result = $this->count(); */
-	        }
-
-        }
-
+		}
 
 		return $this->list_records();
 	}
+
 	function get_group($group_id) { return $this->groups ? array('ID' => $group_id, 'name' => $group_id) : null; }
 	public function count() { return new rcube_result_set(1, ($this->list_page-1) * $this->page_size); }
 	public function get_result() { return $this->result; }
-	public function set_group($gid) {
-        $this->group_id = $gid;
-        $this->cache = null;
-    }
+	public function set_group($gid) { $this->group_id = $gid; $this->cache = null; }
 	function create_group($name) { return false; }
 	function delete_group($gid) { return false; }
 	function rename_group($gid, $newname) { return $newname; }
