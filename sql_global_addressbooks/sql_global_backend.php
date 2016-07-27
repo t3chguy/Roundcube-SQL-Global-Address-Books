@@ -16,11 +16,26 @@ class sql_global_backend extends rcube_addressbook {
 	public $primary_key = 'ID';
 	public $readonly = true;
 
-	private $filter, $result, $name;
+	private $filter, $result, $name, $db;
 
 	public function __construct($name) {
 		$this->ready = true;
 		$this->name  = $name;
+		$dbtype = rcmail::get_instance()->config->get('_database_type', '');
+		if (empty($dbtype)) {
+			// use roundcube native database
+			$this->db = rcube::get_instance()->db;
+		} else {
+			// setup connection to external database
+			$dbhost = rcmail::get_instance()->config->get('_database_host', '');
+			$dbport = rcmail::get_instance()->config->get('_database_port', '');
+			$dbuser = rcmail::get_instance()->config->get('_database_user', 'roundcube');
+			$dbpass = rcmail::get_instance()->config->get('_database_pass', '');
+			$dbname = rcmail::get_instance()->config->get('_database_name', 'roundcubemail');
+			if (!empty($dbport)) { $dbport = ':'.$dbport; }
+			$dsn = $dbtype.'://'.$dbuser.':'.$dbpass.'@'.$dbhost.$dbport.'/'.$dbname;
+			$this->db = rcube_db::factory($dsn);
+		}
 	}
 
 	public function get_name() { return $this->name; }
@@ -33,7 +48,7 @@ class sql_global_backend extends rcube_addressbook {
 	}
 
 	public function get_record($id, $assoc=false) {
-		$db = rcube::get_instance()->db;
+		$db = $this->db;
 		$db->query('SELECT * FROM global_addressbook WHERE `ID`=?', $id);
 		if ($sql_arr = $db->fetch_assoc()) {
 			$sql_arr['email'] = explode(',', $sql_arr['email']);
@@ -47,7 +62,7 @@ class sql_global_backend extends rcube_addressbook {
 
 	public function list_records($cols=null, $subset=0) {
 		$this->result = $this->count();
-		$db = rcube::get_instance()->db;
+		$db = $this->db;
 
 		if (empty($this->group_id)) {
 
@@ -104,21 +119,21 @@ class sql_global_backend extends rcube_addressbook {
 		if ($search) {
 			switch (intval($mode)) {
 	            case 1:
-	                $x = $rc->db->ilike('domain', $search);
+	                $x = $db->ilike('domain', $search);
 	                break;
 	            case 2:
-	                $x = $rc->db->ilike('domain', $search . '%');
+	                $x = $db->ilike('domain', $search . '%');
 	                break;
 	            default:
-	                $x = $rc->db->ilike('domain', '%' . $search . '%');
+	                $x = $db->ilike('domain', '%' . $search . '%');
             }
             $x = ' WHERE ' . $x . ' ';
 		} else { $x = ' '; }
 
 		if ($cf === array('*')) {
 			$cf = array();
-			$rc->db->query('SELECT domain FROM global_addressbook' . $x . 'GROUP BY domain');
-			while ($ret = $rc->db->fetch_assoc()) {$cf[] = $ret['domain']; }
+			$db->query('SELECT domain FROM global_addressbook' . $x . 'GROUP BY domain');
+			while ($ret = $db->fetch_assoc()) {$cf[] = $ret['domain']; }
 		}
 
 		$co = array();
@@ -133,7 +148,7 @@ class sql_global_backend extends rcube_addressbook {
         if (!is_array($required) && !empty($required)) { $required = array($required); }
 
 
-        $db = rcube::get_instance()->db;
+        $db = $this->db;
         $where = array();
         $mode = intval($mode);
         $WS = ' ';
