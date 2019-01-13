@@ -1,4 +1,4 @@
-__If you have any other ideas, create an Issue in this github project.__
+__Project no longer actively maintained.__
 
 # RoundCube SQL Global Address Books
 Roundcube Plugin to create an Address Book from list of users in the SQL View.
@@ -87,5 +87,3 @@ If you do not trust me, just look through the source code, it should be pretty s
 # Support
 
 The Configuration File has been annotated and should prove easy to understand.
-Feel free to contact me directly at `postmaster _at_ webdevguru.co.uk` if you
-have any queries or requests!
