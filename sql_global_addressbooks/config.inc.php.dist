@@ -7,6 +7,17 @@ Any line being Commented Out or Removed is the Same as Leaving it at Default, or
 So Remove Lines for any Books you do not wish to use to simplify this Configuration File. */
 
 /*
+Use these parameters to connect to an external database.
+If the database type value is empty (default), the roundcube database is used. */
+//	$config['_database_type'] = '';
+//	$config['_database_host'] = 'localhost';
+/* If the port value is empty (default), it's set by the database driver */
+//	$config['_database_port'] = '';
+//	$config['_database_user'] = 'roundcube';
+//	$config['_database_pass'] = '';
+//	$config['_database_name'] = 'roundcubemail';
+
+/*
 The `Domain Book` is an Address Book which will contain all the members which have the same
 e-mail domain as the logged in user themself, the only values for configuration are:
 NULL for disable or a string as the name of the `Domain Book`.
