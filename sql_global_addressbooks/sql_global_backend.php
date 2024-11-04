@@ -36,16 +36,19 @@ class sql_global_backend extends rcube_addressbook {
 		$db = rcube::get_instance()->db;
 		$db->query('SELECT * FROM global_addressbook WHERE `ID`=?', $id);
 		if ($sql_arr = $db->fetch_assoc()) {
+			//print_r($sql_arr);
 			$sql_arr['email'] = explode(',', $sql_arr['email']);
 			$this->result = new rcube_result_set(1);
 			$this->result->add($sql_arr);
 		}
 
-		return $assoc && $record ? $record : $this->result;
+		//return $assoc && $record ? $record : $this->result;
+		// wh1
+		return $this->result[0];
 
 	}
-
-	public function list_records($cols=null, $subset=0) {
+	# wh1
+	public function list_records($cols=null, $subset=0, $nocount = false) {
 		$this->result = $this->count();
 		$db = rcube::get_instance()->db;
 
@@ -213,7 +216,7 @@ class sql_global_backend extends rcube_addressbook {
     }
 	function create_group($name) { return false; }
 	function delete_group($gid) { return false; }
-	function rename_group($gid, $newname) { return $newname; }
+	function rename_group($gid, $newname,&$newid) { return $newname; }
 	function add_to_group($group_id, $ids) { return false; }
 	function remove_from_group($group_id, $ids) { return false; }
 
