@@ -36,14 +36,13 @@ class sql_global_backend extends rcube_addressbook {
 		$db = rcube::get_instance()->db;
 		$db->query('SELECT * FROM global_addressbook WHERE `ID`=?', $id);
 		if ($sql_arr = $db->fetch_assoc()) {
-			//print_r($sql_arr);
 			$sql_arr['email'] = explode(',', $sql_arr['email']);
 			$this->result = new rcube_result_set(1);
 			$this->result->add($sql_arr);
 		}
 
 		//return $assoc && $record ? $record : $this->result;
-		// wh1
+		// fixed to work with roundcube 1.6.9
 		return $this->result[0];
 
 	}
@@ -137,8 +136,9 @@ class sql_global_backend extends rcube_addressbook {
 
 
         $db = rcube::get_instance()->db;
-        $where = array();
-        $mode = intval($mode);
+	$where = array();
+	//  $mode is undefined for newer PHP 
+        //$mode = intval($mode);
         $WS = ' ';
 
         foreach ($fields as $idx => $col) {
